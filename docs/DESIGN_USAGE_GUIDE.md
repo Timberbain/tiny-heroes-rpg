@@ -83,7 +83,7 @@ The design system is built on Tailwind CSS with custom tokens. All components sh
 ```tsx
 <div className="
   relative
-  bg-gradient-to-br from-parchment to-parchment-dark
+  bg-linear-to-br from-parchment to-parchment-dark
   border-5 border-border-dark rounded-2xl
   shadow-xl
   p-8
@@ -205,7 +205,7 @@ The design system is built on Tailwind CSS with custom tokens. All components sh
 **Dice Roll Result**
 ```tsx
 <div className="
-  bg-gradient-to-br from-adventure-red to-dragon
+  bg-linear-to-br from-adventure-red to-dragon
   border-4 border-border-dark rounded-2xl
   px-12 py-8
   shadow-lg
@@ -215,7 +215,7 @@ The design system is built on Tailwind CSS with custom tokens. All components sh
   <div className="
     font-heading text-7xl font-extrabold
     text-white
-    [text-shadow:_0_3px_0_#3D2E1F,_0_6px_12px_rgba(0,0,0,0.3)]
+    [text-shadow:0_3px_0_#3D2E1F,0_6px_12px_rgba(0,0,0,0.3)]
     mb-2
   ">
     6

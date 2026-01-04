@@ -1,64 +1,58 @@
-import { NextRequest, NextResponse } from 'next/server'
-import connectDB from '@/lib/mongodb'
-import SessionModel from '@/lib/models/Session'
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/mongodb';
+import SessionModel from '@/lib/models/Session';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params;
 
-    await connectDB()
+    await connectDB();
 
-    const session = await SessionModel.findOne({ sessionId: id })
+    const session = await SessionModel.findOne({ sessionId: id });
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Session not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ session: session.toObject() })
+    return NextResponse.json({ session: session.toObject() });
   } catch (error) {
-    console.error('Error fetching session:', error)
+    console.error('Error fetching session:', error);
     return NextResponse.json(
       { error: 'Failed to fetch session' },
       { status: 500 }
-    )
+    );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
-    const updates = await request.json()
+    const { id } = await params;
+    const updates = await request.json();
 
-    await connectDB()
+    await connectDB();
 
     const session = await SessionModel.findOneAndUpdate(
       { sessionId: id },
       { $set: updates },
       { new: true, runValidators: true }
-    )
+    );
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Session not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ session: session.toObject() })
+    return NextResponse.json({ session: session.toObject() });
   } catch (error) {
-    console.error('Error updating session:', error)
+    console.error('Error updating session:', error);
     return NextResponse.json(
       { error: 'Failed to update session' },
       { status: 500 }
-    )
+    );
   }
 }

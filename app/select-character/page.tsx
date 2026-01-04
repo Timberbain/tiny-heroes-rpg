@@ -1,68 +1,68 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Image from 'next/image'
-import { getAllCharacters } from '@/lib/characters'
-import { CharacterId } from '@/lib/types'
-import { SKILL_ICONS, SKILL_NAMES, SKILL_RATING_LABELS } from '@/lib/characters'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { getAllCharacters } from '@/lib/characters';
+import { CharacterId } from '@/lib/types';
+import {
+  SKILL_ICONS,
+  SKILL_NAMES,
+  SKILL_RATING_LABELS,
+} from '@/lib/characters';
 
 export default function SelectCharacter() {
-  const router = useRouter()
-  const [selectedCharacter, setSelectedCharacter] = useState<CharacterId | null>(null)
-  const characters = getAllCharacters()
+  const router = useRouter();
+  const [selectedCharacter, setSelectedCharacter] =
+    useState<CharacterId | null>(null);
+  const characters = getAllCharacters();
 
   const handleSelectCharacter = (characterId: CharacterId) => {
-    setSelectedCharacter(characterId)
+    setSelectedCharacter(characterId);
     // Small delay for visual feedback before navigation
     setTimeout(() => {
-      router.push(`/setup-adventure?character=${characterId}`)
-    }, 300)
-  }
+      router.push(`/setup-adventure?character=${characterId}`);
+    }, 300);
+  };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-parchment to-parchment-dark p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-
+    <main className="min-h-screen bg-linear-to-br from-parchment to-parchment-dark p-4 md:p-8">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="text-center mb-8 md:mb-12 bg-cloud border-4 border-border-dark rounded-3xl shadow-xl p-6 md:p-8">
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary mb-4">
+        <div className="mb-8 rounded-3xl border-4 border-border-dark bg-cloud p-6 text-center shadow-xl md:mb-12 md:p-8">
+          <h1 className="mb-4 font-heading text-3xl font-bold text-text-primary sm:text-4xl md:text-5xl lg:text-6xl">
             Choose Your Hero! 🌟
           </h1>
-          <p className="font-body text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
-            Pick a brave hero to go on amazing adventures! Each hero is special and great at different things.
+          <p className="mx-auto max-w-2xl font-body text-lg text-text-secondary md:text-xl">
+            Pick a brave hero to go on amazing adventures! Each hero is special
+            and great at different things.
           </p>
         </div>
 
         {/* Character Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
           {characters.map((character) => {
-            const isSelected = selectedCharacter === character.id
+            const isSelected = selectedCharacter === character.id;
 
             return (
               <div
                 key={character.id}
-                className={`
-                  relative
-                  bg-gradient-to-br from-parchment to-parchment-dark
-                  border-5 border-border-dark rounded-3xl
-                  shadow-lg hover:shadow-xl
-                  p-6 md:p-8
-                  transition-all duration-300
-                  cursor-pointer
-                  ${isSelected ? 'ring-4 ring-offset-4 ring-offset-parchment' : 'hover:-translate-y-2'}
-                `}
-                style={{
-                  ringColor: isSelected ? character.color : 'transparent'
-                }}
+                className={`relative cursor-pointer rounded-3xl border-5 border-border-dark bg-linear-to-br from-parchment to-parchment-dark p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-8 ${isSelected ? 'ring-4 ring-offset-4 ring-offset-parchment' : 'hover:-translate-y-2'} `}
+                style={
+                  {
+                    '--tw-ring-color': isSelected
+                      ? character.color
+                      : 'transparent',
+                  } as React.CSSProperties
+                }
                 onClick={() => handleSelectCharacter(character.id)}
               >
                 {/* Character Header */}
-                <div className="flex items-start gap-4 mb-6">
+                <div className="mb-6 flex items-start gap-4">
                   {/* Character Image */}
-                  <div className="relative flex-shrink-0">
+                  <div className="relative shrink-0">
                     <div
-                      className="w-24 h-24 md:w-32 md:h-32 rounded-2xl border-4 border-border-dark overflow-hidden bg-cloud shadow-md"
+                      className="h-24 w-24 overflow-hidden rounded-2xl border-4 border-border-dark bg-cloud shadow-md md:h-32 md:w-32"
                       style={{ borderColor: character.color }}
                     >
                       <Image
@@ -70,49 +70,55 @@ export default function SelectCharacter() {
                         alt={character.displayName}
                         width={128}
                         height={128}
-                        className="w-full h-full object-contain p-2"
+                        className="h-full w-full object-contain p-2"
                       />
                     </div>
                   </div>
 
                   {/* Character Info */}
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <h2
-                      className="font-heading text-2xl md:text-3xl font-bold mb-2"
+                      className="mb-2 font-heading text-2xl font-bold md:text-3xl"
                       style={{ color: character.color }}
                     >
                       {character.displayName}
                     </h2>
-                    <p className="font-body text-base md:text-lg text-text-secondary mb-3">
+                    <p className="mb-3 font-body text-base text-text-secondary md:text-lg">
                       {character.archetype}
                     </p>
-                    <p className="font-body text-sm md:text-base text-text-primary">
+                    <p className="font-body text-sm text-text-primary md:text-base">
                       {character.description}
                     </p>
                   </div>
                 </div>
 
                 {/* Skills Display */}
-                <div className="space-y-3 mb-6">
-                  <h3 className="font-heading text-lg md:text-xl font-bold text-text-primary mb-3">
+                <div className="mb-6 space-y-3">
+                  <h3 className="mb-3 font-heading text-lg font-bold text-text-primary md:text-xl">
                     Special Skills:
                   </h3>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {(Object.keys(character.skills) as Array<keyof typeof character.skills>).map((skillKey) => {
-                      const skillValue = character.skills[skillKey]
-                      const skillName = SKILL_NAMES[skillKey]
-                      const skillIcon = SKILL_ICONS[skillKey]
-                      const skillLabel = SKILL_RATING_LABELS[skillValue]
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {(
+                      Object.keys(character.skills) as Array<
+                        keyof typeof character.skills
+                      >
+                    ).map((skillKey) => {
+                      const skillValue = character.skills[skillKey];
+                      const skillName = SKILL_NAMES[skillKey];
+                      const skillIcon = SKILL_ICONS[skillKey];
+                      const skillLabel = SKILL_RATING_LABELS[skillValue];
 
                       return (
                         <div
                           key={skillKey}
-                          className="flex items-center gap-3 bg-cloud border-3 border-border-dark rounded-full px-4 py-3 shadow-sm"
+                          className="flex items-center gap-3 rounded-full border-3 border-border-dark bg-cloud px-4 py-3 shadow-sm"
                         >
-                          <span className="text-3xl flex-shrink-0">{skillIcon}</span>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-heading text-sm font-semibold text-text-primary truncate">
+                          <span className="shrink-0 text-3xl">
+                            {skillIcon}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="truncate font-heading text-sm font-semibold text-text-primary">
                               {skillName}
                             </div>
                             <div className="font-body text-xs text-text-secondary">
@@ -120,49 +126,31 @@ export default function SelectCharacter() {
                             </div>
                           </div>
                           <div
-                            className={`
-                              flex items-center justify-center
-                              w-10 h-10 flex-shrink-0
-                              border-3 border-border-dark rounded-full
-                              font-heading text-xl font-extrabold text-white
-                              ${skillValue === 0 && 'bg-castle'}
-                              ${skillValue === 1 && 'bg-adventure-yellow'}
-                              ${skillValue === 2 && 'bg-adventure-green'}
-                              ${skillValue === 3 && 'bg-adventure-red'}
-                            `}
+                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-3 border-border-dark font-heading text-xl font-extrabold text-white ${skillValue === 0 && 'bg-castle'} ${skillValue === 1 && 'bg-adventure-yellow'} ${skillValue === 2 && 'bg-adventure-green'} ${skillValue === 3 && 'bg-adventure-red'} `}
                           >
                             {skillValue}
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </div>
 
                 {/* Select Button */}
                 <button
-                  className={`
-                    w-full
-                    font-heading text-xl md:text-2xl font-bold
-                    px-8 py-4 min-h-[64px]
-                    text-white
-                    border-4 border-border-dark rounded-2xl
-                    shadow-md hover:shadow-lg
-                    hover:-translate-y-1 active:translate-y-1
-                    active:shadow-pressed
-                    transition-all duration-200
-                    ${isSelected ? 'animate-celebrate' : ''}
-                  `}
+                  className={`min-h-[64px] w-full rounded-2xl border-4 border-border-dark px-8 py-4 font-heading text-xl font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg active:translate-y-1 active:shadow-pressed md:text-2xl ${isSelected ? 'animate-celebrate' : ''} `}
                   style={{ backgroundColor: character.color }}
                   onClick={(e) => {
-                    e.stopPropagation()
-                    handleSelectCharacter(character.id)
+                    e.stopPropagation();
+                    handleSelectCharacter(character.id);
                   }}
                 >
-                  {isSelected ? '✨ Selected!' : `Choose ${character.displayName}!`}
+                  {isSelected
+                    ? '✨ Selected!'
+                    : `Choose ${character.displayName}!`}
                 </button>
               </div>
-            )
+            );
           })}
         </div>
 
@@ -170,21 +158,12 @@ export default function SelectCharacter() {
         <div className="text-center">
           <button
             onClick={() => router.push('/')}
-            className="
-              font-body text-lg font-semibold
-              px-8 py-4
-              bg-cloud text-text-primary
-              border-3 border-border-medium rounded-xl
-              shadow-sm hover:shadow-md
-              hover:-translate-y-0.5
-              transition-all duration-200
-            "
+            className="rounded-xl border-3 border-border-medium bg-cloud px-8 py-4 font-body text-lg font-semibold text-text-primary shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
           >
             ← Back to Home
           </button>
         </div>
-
       </div>
     </main>
-  )
+  );
 }

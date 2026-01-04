@@ -1,34 +1,33 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import './design-system.css'
+import { useState } from 'react';
+import './design-system.css';
 
 export default function DesignSystemShowcase() {
-  const [hearts, setHearts] = useState(3)
-  const [diceRoll, setDiceRoll] = useState<number | null>(null)
-  const [isRolling, setIsRolling] = useState(false)
+  const [hearts, setHearts] = useState(3);
+  const [diceRoll, setDiceRoll] = useState<number | null>(null);
+  const [isRolling, setIsRolling] = useState(false);
 
   const rollDice = () => {
-    setIsRolling(true)
-    setDiceRoll(null)
+    setIsRolling(true);
+    setDiceRoll(null);
 
     // Simulate rolling animation
-    let count = 0
+    let count = 0;
     const interval = setInterval(() => {
-      setDiceRoll(Math.floor(Math.random() * 6) + 1)
-      count++
+      setDiceRoll(Math.floor(Math.random() * 6) + 1);
+      count++;
       if (count > 10) {
-        clearInterval(interval)
-        setDiceRoll(Math.floor(Math.random() * 6) + 1)
-        setIsRolling(false)
+        clearInterval(interval);
+        setDiceRoll(Math.floor(Math.random() * 6) + 1);
+        setIsRolling(false);
       }
-    }, 100)
-  }
+    }, 100);
+  };
 
   return (
     <div className="showcase">
       <div className="showcase-container">
-
         {/* Header */}
         <header className="showcase-header">
           <h1 className="heading-hero">Tiny Heroes Design System</h1>
@@ -42,35 +41,50 @@ export default function DesignSystemShowcase() {
           <h2 className="heading-xl">Color Palette</h2>
           <div className="color-grid">
             <div className="color-card">
-              <div className="color-swatch" style={{ background: '#F5E6D3' }}></div>
+              <div
+                className="color-swatch"
+                style={{ background: '#F5E6D3' }}
+              ></div>
               <div className="color-info">
                 <span className="color-name">Parchment</span>
                 <span className="color-hex">#F5E6D3</span>
               </div>
             </div>
             <div className="color-card">
-              <div className="color-swatch" style={{ background: '#E63946' }}></div>
+              <div
+                className="color-swatch"
+                style={{ background: '#E63946' }}
+              ></div>
               <div className="color-info">
                 <span className="color-name">Adventure Red</span>
                 <span className="color-hex">#E63946</span>
               </div>
             </div>
             <div className="color-card">
-              <div className="color-swatch" style={{ background: '#457B9D' }}></div>
+              <div
+                className="color-swatch"
+                style={{ background: '#457B9D' }}
+              ></div>
               <div className="color-info">
                 <span className="color-name">Adventure Blue</span>
                 <span className="color-hex">#457B9D</span>
               </div>
             </div>
             <div className="color-card">
-              <div className="color-swatch" style={{ background: '#06A77D' }}></div>
+              <div
+                className="color-swatch"
+                style={{ background: '#06A77D' }}
+              ></div>
               <div className="color-info">
                 <span className="color-name">Adventure Green</span>
                 <span className="color-hex">#06A77D</span>
               </div>
             </div>
             <div className="color-card">
-              <div className="color-swatch" style={{ background: '#FFB703' }}></div>
+              <div
+                className="color-swatch"
+                style={{ background: '#FFB703' }}
+              ></div>
               <div className="color-info">
                 <span className="color-name">Adventure Yellow</span>
                 <span className="color-hex">#FFB703</span>
@@ -100,7 +114,9 @@ export default function DesignSystemShowcase() {
               <span className="typo-meta">Nunito • 22px • Normal</span>
             </div>
             <div className="typo-sample">
-              <p className="text-base">Standard body text with excellent readability</p>
+              <p className="text-base">
+                Standard body text with excellent readability
+              </p>
               <span className="typo-meta">Nunito • 18px • Normal</span>
             </div>
           </div>
@@ -110,12 +126,8 @@ export default function DesignSystemShowcase() {
         <section className="showcase-section">
           <h2 className="heading-xl">Buttons</h2>
           <div className="button-grid">
-            <button className="button-primary">
-              Start Adventure! ✨
-            </button>
-            <button className="button-secondary">
-              Go Back
-            </button>
+            <button className="button-primary">Start Adventure! ✨</button>
+            <button className="button-secondary">Go Back</button>
             <button className="button-character button-sorceress">
               Choose Sorceress
             </button>
@@ -141,13 +153,15 @@ export default function DesignSystemShowcase() {
             <div className="card">
               <h3 className="heading-lg">Basic Card</h3>
               <p className="text-base">
-                A simple card with border and shadow. Perfect for containing related content.
+                A simple card with border and shadow. Perfect for containing
+                related content.
               </p>
             </div>
             <div className="card-character">
               <h3 className="heading-lg">Character Card</h3>
               <p className="text-base">
-                Special storybook-style card with decorative borders and parchment background.
+                Special storybook-style card with decorative borders and
+                parchment background.
               </p>
               <div className="skill-badges">
                 <div className="skill-badge">
@@ -177,7 +191,9 @@ export default function DesignSystemShowcase() {
                 <div
                   key={heart}
                   className={`heart ${heart > hearts ? 'lost' : ''}`}
-                  onClick={() => setHearts(hearts === heart ? heart - 1 : heart)}
+                  onClick={() =>
+                    setHearts(hearts === heart ? heart - 1 : heart)
+                  }
                 >
                   ❤️
                 </div>
@@ -231,7 +247,9 @@ export default function DesignSystemShowcase() {
           <h2 className="heading-xl">Form Elements</h2>
           <div className="form-demo">
             <div className="form-group">
-              <label className="form-label">What's your hero's name?</label>
+              <label className="form-label">
+                What&apos;s your hero&apos;s name?
+              </label>
               <input
                 type="text"
                 className="input-text"
@@ -248,7 +266,9 @@ export default function DesignSystemShowcase() {
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">Tell us about your adventure idea:</label>
+              <label className="form-label">
+                Tell us about your adventure idea:
+              </label>
               <textarea
                 className="input-textarea"
                 placeholder="What exciting adventure should we go on?"
@@ -322,8 +342,7 @@ export default function DesignSystemShowcase() {
             </div>
           </div>
         </section>
-
       </div>
     </div>
-  )
+  );
 }

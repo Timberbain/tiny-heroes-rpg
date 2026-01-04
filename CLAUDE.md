@@ -101,7 +101,7 @@ Four skills rated 0-3:
 - **Complete specification**: `docs/DESIGN_SYSTEM.md` - Full design tokens, components, patterns
 - **Quick reference**: `docs/DESIGN_USAGE_GUIDE.md` - Copy-paste code examples
 - **Interactive showcase**: `/design-system` route - Live component demonstrations
-- **Summary**: `DESIGN_SYSTEM_SUMMARY.md` - Executive overview
+- **Summary**: `docs/DESIGN_SYSTEM_SUMMARY.md` - Executive overview
 
 ### Design Philosophy: "Storybook Adventure"
 Inspired by popup children's books with:

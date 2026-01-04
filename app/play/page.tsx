@@ -169,7 +169,7 @@ export default function PlayAdventure() {
   const character = getCharacter(session.characterId)
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-parchment to-parchment-dark flex flex-col">
+    <main className="min-h-screen bg-linear-to-br from-parchment to-parchment-dark flex flex-col">
 
       {/* Header */}
       <div className="bg-cloud border-b-4 border-border-dark shadow-lg p-4 md:p-6">
@@ -178,7 +178,7 @@ export default function PlayAdventure() {
           {/* Character Info */}
           <div className="flex items-center gap-3 md:gap-4">
             <div
-              className="w-12 h-12 md:w-16 md:h-16 rounded-xl border-3 overflow-hidden flex-shrink-0"
+              className="w-12 h-12 md:w-16 md:h-16 rounded-xl border-3 overflow-hidden shrink-0"
               style={{ borderColor: character.color }}
             >
               <Image

@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-br from-parchment to-parchment-dark relative overflow-hidden">
+    <main className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-linear-to-br from-parchment to-parchment-dark relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-10 left-10 text-6xl">🏰</div>

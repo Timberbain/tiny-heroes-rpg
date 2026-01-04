@@ -1,0 +1,165 @@
+{
+  "scene": {
+    "art_style": {
+      "genre": "chibi fantasy RPG illustration",
+      "influences": [
+        "anime",
+        "JRPG",
+        "kawaii design",
+        "mobile game avatars"
+      ],
+      "visual_features": {
+        "line_quality": "clean, bold, rounded outlines",
+        "color_palette": "bright, saturated colors with high contrast",
+        "shading": "soft cel-shading with gradient highlights",
+        "proportions": "large heads, small bodies, simplified anatomy",
+        "expressive_style": "playful, cute, exaggerated emotions"
+      },
+      "atmosphere": {
+        "tone": "lighthearted, cheerful, fantasy-themed",
+        "intended_audience": [
+          "gaming",
+          "collectible avatars",
+          "casual fantasy fans"
+        ],
+        "energy_level": "vibrant, fun, adventurous"
+      }
+    },
+    "layout": {
+      "grid": "2x3",
+      "spatial_arrangement": "characters evenly distributed in rows, white background, no environmental scenery",
+      "focus": "each character is presented in isolation but aligned as a group"
+    },
+    "characters": [
+      {
+        "id": "char_1",
+        "name": "Forest Mage",
+        "position": "top-left",
+        "visual_profile": {
+          "hair": "leafy green, messy",
+          "outfit": "green robe with layered armor pieces",
+          "accessories": [
+            "wooden staff with crystal"
+          ],
+          "color_scheme": [
+            "green",
+            "brown",
+            "gold"
+          ],
+          "expression": "calm, friendly",
+          "pose": "standing upright, staff in hand",
+          "semantic_role": "nature wizard, druid"
+        }
+      },
+      {
+        "id": "char_2",
+        "name": "Martial Artist",
+        "position": "top-center",
+        "visual_profile": {
+          "hair": "bald",
+          "outfit": "white gi with black belt",
+          "accessories": [],
+          "color_scheme": [
+            "white",
+            "black"
+          ],
+          "expression": "neutral, peaceful",
+          "pose": "standing with hands slightly raised",
+          "semantic_role": "monk, disciplined fighter"
+        }
+      },
+      {
+        "id": "char_3",
+        "name": "Wizard",
+        "position": "top-right",
+        "visual_profile": {
+          "hair": "gray with bangs",
+          "outfit": "dark robe with belt",
+          "accessories": [
+            "large wizard hat",
+            "magic staff with glowing orb",
+            "floating crystal"
+          ],
+          "color_scheme": [
+            "purple",
+            "gold",
+            "blue"
+          ],
+          "expression": "focused, wise",
+          "pose": "holding staff forward, casting magic",
+          "semantic_role": "sorcerer, spellcaster"
+        }
+      },
+      {
+        "id": "char_4",
+        "name": "Pirate",
+        "position": "bottom-left",
+        "visual_profile": {
+          "hair": "black, partially covered by hat",
+          "outfit": "pirate coat with gold trim, red sash",
+          "accessories": [
+            "skull-and-crossbones hat",
+            "cutlass sword",
+            "golden earring"
+          ],
+          "color_scheme": [
+            "red",
+            "black",
+            "gold"
+          ],
+          "expression": "smiling, mischievous",
+          "pose": "brandishing sword playfully",
+          "semantic_role": "swashbuckler, adventurer"
+        }
+      },
+      {
+        "id": "char_5",
+        "name": "Knight",
+        "position": "bottom-center",
+        "visual_profile": {
+          "hair": "brown (under helmet)",
+          "outfit": "silver plate armor with blue accents",
+          "accessories": [
+            "longsword",
+            "round shield with cross motif"
+          ],
+          "color_scheme": [
+            "blue",
+            "silver",
+            "white"
+          ],
+          "expression": "determined, heroic",
+          "pose": "standing guard, shield forward",
+          "semantic_role": "protector, defender, classic knight"
+        }
+      },
+      {
+        "id": "char_6",
+        "name": "Berserker",
+        "position": "bottom-right",
+        "visual_profile": {
+          "hair": "spiky orange, flame-like",
+          "outfit": "spiked armor with red accents",
+          "accessories": [
+            "massive spiked battle axe",
+            "ornamental shield with face motif"
+          ],
+          "color_scheme": [
+            "orange",
+            "red",
+            "silver"
+          ],
+          "expression": "ferocious, grinning",
+          "pose": "battle stance, weapon raised",
+          "semantic_role": "barbarian, brute-force warrior"
+        }
+      }
+    ],
+    "semantic_relations": {
+      "shared_context": "fantasy RPG character archetypes",
+      "contrast": "each character visually distinct to represent different classes",
+      "group_tone": "diverse party of adventurers",
+      "game_inference": "characters appear as collectible avatars or hero roster for a game"
+    }
+  }
+}

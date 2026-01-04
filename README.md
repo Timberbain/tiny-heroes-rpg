@@ -108,7 +108,7 @@ npm run dev
 - **Complete specification**: `docs/DESIGN_SYSTEM.md`
 - **Quick reference**: `docs/DESIGN_USAGE_GUIDE.md`
 - **Getting started**: `docs/DESIGN_README.md`
-- **Summary**: `DESIGN_SYSTEM_SUMMARY.md`
+- **Summary**: `docs/DESIGN_SYSTEM_SUMMARY.md`
 
 ### Color Palette
 - **Sorceress Red** (#E63946) - Magic & Energy

@@ -60,33 +60,88 @@ export default function PlayAdventure() {
   }, [session?.messages])
 
   async function startAdventure(sessionId: string) {
-    // TODO: Call game master API to get initial greeting
-    // For now, add a placeholder message
-    const initialMessage: Message = {
-      id: 'initial',
-      role: 'assistant',
-      content: '🎮 Welcome brave hero! Your adventure is about to begin...',
-      timestamp: new Date(),
-    }
-
-    // Update session with initial message
     try {
-      const response = await fetch(`/api/sessions/${sessionId}`, {
+      // Get current session data
+      const sessionResponse = await fetch(`/api/sessions/${sessionId}`)
+      if (!sessionResponse.ok) {
+        throw new Error('Failed to load session')
+      }
+      const sessionData = await sessionResponse.json()
+
+      // Call game master API to get initial greeting
+      const gmResponse = await fetch('/api/game-master', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          userMessage: '[ADVENTURE START] The hero is ready to begin!',
+          session: sessionData.session,
+        }),
+      })
+
+      if (!gmResponse.ok) {
+        throw new Error('Failed to get initial greeting')
+      }
+
+      const gameState = await gmResponse.json()
+
+      const initialMessage: Message = {
+        id: 'initial',
+        role: 'assistant',
+        content: gameState.narrative,
+        timestamp: new Date(),
+        gameState: gameState.rollResult ? {
+          hearts: gameState.hearts,
+          rollResult: gameState.rollResult,
+        } : {
+          hearts: gameState.hearts,
+        },
+      }
+
+      // Update session with initial message
+      const updateResponse = await fetch(`/api/sessions/${sessionId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           messages: [initialMessage],
+          hearts: gameState.hearts,
         }),
       })
 
-      if (response.ok) {
-        const data = await response.json()
+      if (updateResponse.ok) {
+        const data = await updateResponse.json()
         setSession(data.session)
       }
     } catch (error) {
       console.error('Error starting adventure:', error)
+      // Fallback to simple greeting
+      const fallbackMessage: Message = {
+        id: 'initial',
+        role: 'assistant',
+        content: '🎮 Welcome brave hero! Your adventure is about to begin... What would you like to do?',
+        timestamp: new Date(),
+      }
+      try {
+        const response = await fetch(`/api/sessions/${sessionId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            messages: [fallbackMessage],
+          }),
+        })
+        if (response.ok) {
+          const data = await response.json()
+          setSession(data.session)
+        }
+      } catch (fallbackError) {
+        console.error('Fallback also failed:', fallbackError)
+      }
     }
   }
 
@@ -115,13 +170,36 @@ export default function PlayAdventure() {
     setUserInput('')
 
     try {
-      // TODO: Call game master API to get AI response
-      // For now, add a placeholder response
+      // Call game master API to get AI response
+      const gmResponse = await fetch('/api/game-master', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId: session.sessionId,
+          userMessage: userInput.trim(),
+          session,
+        }),
+      })
+
+      if (!gmResponse.ok) {
+        throw new Error('Failed to get game master response')
+      }
+
+      const gameState = await gmResponse.json()
+
       const aiMessage: Message = {
         id: `ai-${Date.now()}`,
         role: 'assistant',
-        content: '✨ That sounds exciting! Let me think about what happens next...',
+        content: gameState.narrative,
         timestamp: new Date(),
+        gameState: gameState.rollResult ? {
+          hearts: gameState.hearts,
+          rollResult: gameState.rollResult,
+        } : {
+          hearts: gameState.hearts,
+        },
       }
 
       // Update session
@@ -133,6 +211,8 @@ export default function PlayAdventure() {
         body: JSON.stringify({
           messages: [...session.messages, userMessage, aiMessage],
           interactionCount: session.interactionCount + 1,
+          hearts: gameState.hearts,
+          isComplete: gameState.adventureComplete,
         }),
       })
 
@@ -142,6 +222,17 @@ export default function PlayAdventure() {
       }
     } catch (error) {
       console.error('Error sending message:', error)
+      // Show error message to user
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: '😅 Oops! The Game Master got confused. Please try again!',
+        timestamp: new Date(),
+      }
+      setSession({
+        ...session,
+        messages: [...session.messages, userMessage, errorMessage],
+      })
     } finally {
       setIsSending(false)
     }

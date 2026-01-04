@@ -9,12 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^16.1.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.4",
+    "next": "^16.1.1",
     "openai": "^4.78.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "uuid": "^11.0.4"
   },
   "devDependencies": {
@@ -22,9 +22,11 @@
     "@types/react": "^19.0.6",
     "@types/react-dom": "^19.0.2",
     "@types/uuid": "^10.0.0",
-    "typescript": "^5.7.2",
-    "tailwindcss": "^4.1.0",
+    "autoprefixer": "^10.4.23",
     "eslint": "^9.18.0",
-    "eslint-config-next": "^16.1.1"
+    "eslint-config-next": "^16.1.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.7.2"
   }
 }

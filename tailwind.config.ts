@@ -59,9 +59,14 @@ export default {
         '18': '4.5rem',
         '22': '5.5rem',
       },
+      borderWidth: {
+        '3': '3px',
+        '5': '5px',
+      },
       borderRadius: {
         'xl': '1.5rem',
         '2xl': '2rem',
+        '3xl': '2.5rem',
       },
       boxShadow: {
         // Storybook-style shadows

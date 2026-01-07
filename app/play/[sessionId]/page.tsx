@@ -32,6 +32,7 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
   const [userInput, setUserInput] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [rollResult, setRollResult] = useState<RollResult | null>(null)
+  const hasStartedAdventure = useRef(false)
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -154,6 +155,13 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
   }
 
   async function startAdventure(sessionId: string, sessionData: AdventureSession) {
+    // Prevent duplicate starts
+    if (hasStartedAdventure.current) {
+      console.log('startAdventure already called, skipping duplicate')
+      return
+    }
+    hasStartedAdventure.current = true
+
     try {
       setUIState('sending')
 
@@ -208,6 +216,8 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
         setUIState('awaiting_input')
       }
     } catch (error) {
+      // Reset flag on error so retry is possible
+      hasStartedAdventure.current = false
       console.error('Error starting adventure:', error)
       setUIState('planning_failed')
       setError('Failed to start adventure')

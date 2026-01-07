@@ -63,15 +63,15 @@ export default function Home() {
         {/* Character preview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {[
-            { name: 'Sorceress', color: 'adventure-red', emoji: '🔮' },
-            { name: 'Knight', color: 'adventure-blue', emoji: '⚔️' },
-            { name: 'Ranger', color: 'adventure-green', emoji: '🏹' },
-            { name: 'Bard', color: 'adventure-yellow', emoji: '🎵' },
+            { name: 'Sorceress', colorClass: 'bg-adventure-red', emoji: '🔮' },
+            { name: 'Knight', colorClass: 'bg-adventure-blue', emoji: '⚔️' },
+            { name: 'Ranger', colorClass: 'bg-adventure-green', emoji: '🏹' },
+            { name: 'Bard', colorClass: 'bg-adventure-yellow', emoji: '🎵' },
           ].map((hero) => (
             <div
               key={hero.name}
               className={`
-                bg-${hero.color} text-white
+                ${hero.colorClass} text-white
                 border-4 border-border-dark rounded-xl
                 shadow-md hover:shadow-lg
                 p-4 md:p-6

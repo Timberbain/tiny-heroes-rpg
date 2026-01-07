@@ -12,12 +12,12 @@ interface RollRequestCardProps {
   isRolling: boolean
 }
 
-// Difficulty color mapping
-const DIFFICULTY_COLORS: Record<string, string> = {
-  easy: '#06A77D', // Green
-  normal: '#457B9D', // Blue
-  hard: '#FFB703', // Yellow
-  epic: '#E63946', // Red
+// Difficulty color mapping using design system classes
+const DIFFICULTY_STYLES: Record<string, string> = {
+  easy: 'text-adventure-green',
+  normal: 'text-adventure-blue',
+  hard: 'text-adventure-yellow',
+  epic: 'text-adventure-red',
 }
 
 export default function RollRequestCard({
@@ -31,7 +31,7 @@ export default function RollRequestCard({
   const skillIcon = SKILL_ICONS[pendingRoll.skill]
   const skillName = SKILL_NAMES[pendingRoll.skill]
   const targetNumber = getTargetNumber(pendingRoll.difficulty)
-  const difficultyColor = DIFFICULTY_COLORS[pendingRoll.difficulty] || DIFFICULTY_COLORS.normal
+  const difficultyStyle = DIFFICULTY_STYLES[pendingRoll.difficulty] || DIFFICULTY_STYLES.normal
 
   return (
     <div className="bg-cloud border-4 border-border-dark rounded-2xl shadow-lg p-6 animate-fadeIn">
@@ -64,10 +64,7 @@ export default function RollRequestCard({
         {/* Difficulty Indicator */}
         <div className="text-center">
           <div className="font-body text-sm text-text-secondary">Need</div>
-          <div
-            className="font-heading text-3xl md:text-4xl font-bold"
-            style={{ color: difficultyColor }}
-          >
+          <div className={`font-heading text-3xl md:text-4xl font-bold ${difficultyStyle}`}>
             {targetNumber}+
           </div>
           <div className="font-body text-sm text-text-secondary capitalize">

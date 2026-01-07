@@ -57,6 +57,7 @@ export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAn
                 font-heading text-6xl sm:text-7xl font-extrabold text-text-primary
                 ${phase === 'rolling' ? 'animate-dice-roll' : 'animate-celebrate scale-110'}
               `}
+              style={{ textShadow: '0 3px 0 #3D2E1F' }}
             >
               {displayedNumber}
             </div>
@@ -87,15 +88,23 @@ export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAn
           <>
             {/* Success/Failure Announcement */}
             <div
-              className={`font-heading text-3xl sm:text-4xl font-bold mb-6 ${
-                rollResult.success ? 'text-adventure-green' : 'text-adventure-red'
-              } animate-celebrate`}
+              className={`
+                font-heading text-3xl sm:text-4xl font-bold mb-6
+                ${
+                  rollResult.success
+                    ? 'bg-gradient-to-br from-adventure-green to-forest'
+                    : 'bg-gradient-to-br from-adventure-red to-dragon'
+                }
+                text-white px-6 py-3 rounded-xl
+                border-3 border-border-dark shadow-md
+                animate-celebrate
+              `}
             >
               {rollResult.success ? '✨ SUCCESS! ✨' : '😅 Not Quite!'}
             </div>
 
             {/* Roll Breakdown */}
-            <div className="bg-white/30 border-3 border-border-dark rounded-xl p-6 mb-6">
+            <div className="bg-cloud border-3 border-border-dark rounded-xl p-6 mb-6">
               <div className="font-body text-xl sm:text-2xl text-text-primary mb-4">
                 <span className="font-bold">🎲 {rollResult.diceRoll}</span>
                 {rollResult.explodingRolls.length > 0 &&
@@ -119,12 +128,12 @@ export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAn
             {/* Special Badges */}
             <div className="flex flex-wrap justify-center gap-3 mb-6">
               {rollResult.critical && (
-                <div className="inline-block bg-adventure-yellow text-white px-4 py-2 rounded-full font-heading text-base sm:text-lg border-2 border-border-dark">
+                <div className="inline-block bg-adventure-yellow text-white px-4 py-2 rounded-full font-heading text-base sm:text-lg border-3 border-border-dark">
                   🌟 Critical!
                 </div>
               )}
               {rollResult.fumble && (
-                <div className="inline-block bg-adventure-red text-white px-4 py-2 rounded-full font-heading text-base sm:text-lg border-2 border-border-dark">
+                <div className="inline-block bg-adventure-red text-white px-4 py-2 rounded-full font-heading text-base sm:text-lg border-3 border-border-dark">
                   😂 Fumble!
                 </div>
               )}

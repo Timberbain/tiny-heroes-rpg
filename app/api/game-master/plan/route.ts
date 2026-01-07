@@ -75,10 +75,10 @@ export async function POST(request: NextRequest) {
 
     // Build planning prompt
     const systemPrompt = buildPlanningPrompt({
-      theme: session.adventureSetting,
       setting: session.adventureSetting,
       playerName: session.characterName,
       length: session.adventureLength,
+      adventureInspiration: session.adventureInspiration,
     })
 
     // Call OpenAI Chat Completions API with JSON output
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       model: GAME_MASTER_MODEL,
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: session.adventureInspiration || 'Create an exciting adventure for me!' },
+        { role: 'user', content: 'Generate the adventure plan.' },
       ],
       response_format: { type: 'json_object' },
       temperature: 0.8,

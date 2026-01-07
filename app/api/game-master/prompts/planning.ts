@@ -1,8 +1,8 @@
 interface PlanningPromptParams {
-  theme: string;
   setting: string;
   playerName: string;
   length: 'short' | 'long';
+  adventureInspiration?: string;
 }
 
 export function buildPlanningPrompt(params: PlanningPromptParams): string {
@@ -15,14 +15,15 @@ Constraints and style:
 - Keep everything light, friendly, and non-scary.
 - Tone: playful, encouraging, imaginative.
 - Language: simple, short sentences that are easy for kids to follow.
+- If the player provided story inspiration, you MUST weave their idea into the adventure plan. Make it central to the plot.
 - The adventure should naturally build up toward a fun monster encounter that is more silly than scary.
 - The final step should clearly resolve the adventure in a positive way.
 
 Adventure details:
-- Theme: ${params.theme}
-- Setting: ${params.setting}
+- Adventure setting: ${params.setting}
 - Player name: ${params.playerName} (the main hero)
 - Length: ${params.length}
+${params.adventureInspiration ? `- Player's inspiration: "${params.adventureInspiration}" - You MUST incorporate this idea into the adventure!` : ''}
 
 You MUST respond with **only valid JSON**, no explanations, no extra text.
 

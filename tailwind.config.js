@@ -81,10 +81,12 @@ module.exports = {
       },
       animation: {
         'bounce-gentle': 'bounce-gentle 1s ease-in-out infinite',
+        'bounce-slow': 'bounce 2s ease-in-out infinite',
         'wiggle': 'wiggle 0.5s ease-in-out',
         'celebrate': 'celebrate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
         'heartbeat': 'heartbeat 1.5s ease-in-out infinite',
         'dice-roll': 'dice-roll 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'fadeIn': 'fadeIn 0.3s ease-in',
       },
       keyframes: {
         'bounce-gentle': {
@@ -112,6 +114,10 @@ module.exports = {
           '25%': { transform: 'rotate(90deg) scale(1.1)' },
           '50%': { transform: 'rotate(180deg) scale(1.2)' },
           '75%': { transform: 'rotate(270deg) scale(1.1)' },
+        },
+        'fadeIn': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
     },

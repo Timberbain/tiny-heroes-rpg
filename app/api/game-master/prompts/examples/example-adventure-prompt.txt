@@ -1,0 +1,99 @@
+{
+  "adventurePlan": {
+    "title": "Jompa and the Giggle Treasure",
+    "setting": "A bright land with castles, friendly dragons, and sparkly magic. A hidden treasure waits somewhere nearby.",
+    "heroName": "Jompa",
+    "recommendedAgeRange": "4-8",
+    "overallGoal": "Jompa wants to find the hidden treasure and keep everyone smiling.",
+    "monster": {
+      "name": "Bloop the Bubble Dragon",
+      "description": "A chubby dragon who sneezes bubbles and loves jokes.",
+      "isScary": false
+    },
+    "scenarios": [
+      {
+        "id": 1,
+        "name": "The Shiny Map",
+        "description": "Jompa finds a shiny map near a small castle. The map shows a path to hidden treasure. It looks fun and safe.",
+        "location": "Sunny Castle Yard",
+        "keyNPCs": [
+          "Friendly Castle Cat"
+        ],
+        "likelySkills": [
+          "smart"
+        ],
+        "hasChallenge": true,
+        "notesForGM": "Let Jompa decide how to read or follow the map. Keep it simple and exciting."
+      },
+      {
+        "id": 2,
+        "name": "Magic Bridge",
+        "description": "A wiggly bridge crosses a tiny river. The bridge giggles when stepped on. Jompa must cross carefully.",
+        "location": "Giggle River",
+        "keyNPCs": [],
+        "likelySkills": [
+          "sneaky",
+          "strong"
+        ],
+        "hasChallenge": true,
+        "notesForGM": "Offer playful choices like tiptoeing or holding a rope. No danger."
+      },
+      {
+        "id": 3,
+        "name": "Bubble Clues",
+        "description": "Floating bubbles pop with funny sounds. One bubble shows a dragon tail. Someone silly must live nearby.",
+        "location": "Bubble Meadow",
+        "keyNPCs": [
+          "Talking Bluebird"
+        ],
+        "likelySkills": [
+          "smart"
+        ],
+        "hasChallenge": true,
+        "notesForGM": "Hint at the monster in a fun way. Build curiosity, not fear."
+      },
+      {
+        "id": 4,
+        "name": "Meet Bloop",
+        "description": "Jompa meets Bloop the Bubble Dragon by the treasure cave. Bloop guards the treasure but wants a friend. Bubbles fill the air.",
+        "location": "Sparkle Cave",
+        "keyNPCs": [
+          "Bloop the Bubble Dragon"
+        ],
+        "likelySkills": [
+          "kind"
+        ],
+        "hasChallenge": true,
+        "notesForGM": "Make the encounter silly. Let kindness or jokes solve the problem."
+      },
+      {
+        "id": 5,
+        "name": "Treasure Time",
+        "description": "The treasure is shared with everyone. There are shiny toys and yummy snacks. Everyone feels happy and safe.",
+        "location": "Sparkle Cave",
+        "keyNPCs": [
+          "Bloop the Bubble Dragon",
+          "Friendly Castle Cat"
+        ],
+        "likelySkills": [
+          "kind"
+        ],
+        "hasChallenge": false,
+        "notesForGM": "End calmly and cozy. Celebrate Jompa's success."
+      }
+    ],
+    "expectedNumberOfScenes": 5,
+    "designNotesForGM": "Keep scenes short and playful. Introduce the monster gently with hints, then make the meeting friendly. Avoid scary moments and finish with warmth and praise."
+  },
+  "storySoFar": [
+  ],
+  "gameState": {
+    "currentScenarioId": 1,
+    "hearts": 3,
+    "maxHearts": 3,
+    "monsterAppeared": false,
+    "adventureComplete": false
+  },
+  "playerInput": "Jompa is ready to start the adventure.",
+  "rollInfo": null
+}

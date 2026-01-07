@@ -177,34 +177,159 @@ The AI must be instructed to:
 9. **Celebrate successes**: Make rolling high numbers exciting
 10. **Safety**: No deaths, violence is cartoonish, always age-appropriate
 
-### Game State Flow
-```
-User Input → AI receives (character, current state, user action)
-          → AI determines if roll needed
-          → AI simulates roll if needed (with exploding 6s)
-          → AI narrates outcome with enthusiasm
-          → AI updates state (hearts, story progress)
-          → AI returns (narrative + updated state + roll details)
-```
+## Game Master API Architecture
 
-### Example AI Response Format
-```json
-{
-  "narrative": "You try to climb the tall tree! Roll for Strong Stuff...",
-  "roll": {
-    "skill": "strong",
-    "diceRoll": 6,
-    "explodingRolls": [4],
-    "skillBonus": 0,
-    "total": 10,
-    "targetNumber": 6,
-    "success": true,
-    "critical": true
-  },
-  "hearts": 3,
-  "nextPrompt": "What do you do from up here?"
+### OpenAI Chat Completions API with JSON Mode
+
+The game uses OpenAI's **Chat Completions API** with JSON mode for structured output, combined with Zod validation for type safety.
+
+**Key Components:**
+- **`buildSystemPrompt(session: AdventureSession)`**: Dynamic system prompt generation
+- **Zod Schemas**: Type-safe validation of AI responses
+- **`openai.chat.completions.create()`**: Chat completions with `response_format: { type: 'json_object' }`
+- **Model**: `gpt-4o-2024-08-06` for reliable JSON output
+
+### System Prompt Generation
+
+The `buildSystemPrompt()` function in `/app/api/game-master/prompts/adventure.ts` creates session-specific prompts:
+
+```typescript
+export function buildSystemPrompt(session: AdventureSession): string {
+  const character = getCharacter(session.characterId)
+
+  return `You are the Game Master for "${session.characterName} the ${character.displayName}".
+
+CURRENT HERO:
+- Name: ${session.characterName}
+- Class: ${character.displayName}
+- Skills: Strong ${character.skills.strong}, Smart ${character.skills.smart}, ...
+- Hearts: ${session.hearts}/${session.maxHearts} ❤️
+
+ADVENTURE: ${session.adventurePlan?.title}
+Setting: ${session.adventureSetting}
+
+${getBasePrompt()}  // Full game rules and instructions
+`
 }
 ```
+
+This approach embeds critical session context directly in the system instructions, ensuring the AI has full awareness of the current hero, their skills, and the adventure state.
+
+### Response Types
+
+The AI can respond with two types of JSON structures, validated by Zod schemas:
+
+#### 1. Roll Request (`request_roll`)
+When the AI needs the player to make a dice roll:
+
+```typescript
+{
+  "action": "request_roll",
+  "skill": "strong" | "smart" | "sneaky" | "kind",
+  "difficulty": "easy" | "normal" | "hard" | "epic",
+  "narrative": "Description of what the hero is attempting..."
+}
+```
+
+#### 2. Narration (`narrate`)
+When the AI narrates story progression:
+
+```typescript
+{
+  "action": "narrate",
+  "narrative": "Story text describing what happens...",
+  "heartChange": -1 | 0 | 1,
+  "isMonsterEncounter": boolean,
+  "adventureComplete": boolean
+}
+```
+
+### API Routes
+
+**Three main routes use the Responses API:**
+
+1. **`/api/game-master/route.ts`** - Main adventure progression
+   - Uses `GameMasterResponseSchema` (union of roll_request and narrate)
+   - Handles both roll requests and narration responses
+
+2. **`/api/game-master/roll/route.ts`** - Roll result processing
+   - Uses `NarrateSchema` (narrate only)
+   - Always responds with narration after a roll
+
+3. **`/api/game-master/plan/route.ts`** - Adventure planning
+   - Uses `AdventurePlanSchema`
+   - Generates the adventure structure before gameplay
+
+### Conversation History Handling
+
+To preserve conversation history while keeping the API efficient, we format recent messages as a user message string:
+
+```typescript
+let conversationContext = ''
+
+// Add recent message history (last 5 messages for context)
+const recentMessages = session.messages.slice(-5)
+for (const msg of recentMessages) {
+  if (msg.role === 'user' || msg.role === 'assistant') {
+    conversationContext += `${msg.role === 'user' ? 'Player' : 'GM'}: ${msg.content}\n\n`
+  }
+}
+
+// Add current user message with payload
+conversationContext += `Current turn:\n${userPayload}`
+```
+
+### Example API Call Pattern
+
+```typescript
+// Call OpenAI Chat Completions API with JSON mode
+const completion = await openai.chat.completions.create({
+  model: GAME_MASTER_MODEL,  // gpt-4o-2024-08-06
+  messages: [
+    { role: 'system', content: buildSystemPrompt(session) },
+    { role: 'user', content: conversationContext },
+  ],
+  response_format: { type: 'json_object' },
+  temperature: 0.8,
+})
+
+const message = completion.choices[0]?.message
+
+if (!message?.content) {
+  throw new Error('Failed to get AI response')
+}
+
+// Parse and validate the JSON response with Zod
+const jsonContent = JSON.parse(message.content)
+const parsed = GameMasterResponseSchema.parse(jsonContent)
+
+if (parsed.action === 'request_roll') {
+  // Handle roll request
+} else {
+  // Handle narration
+}
+```
+
+### Game State Flow
+
+```
+User Action → Build system prompt with session context
+           → Format conversation history as string
+           → Send to OpenAI Chat Completions API with JSON mode
+           → Parse JSON response and validate with Zod
+           → Process response (roll request OR narration)
+           → Update session state (hearts, progress, messages)
+           → Return to client
+```
+
+### Benefits of This Architecture
+
+1. **Type Safety**: Zod validates AI responses, catching malformed data
+2. **Session Context**: AI always knows the hero's current state via system prompt
+3. **Structured Output**: JSON mode ensures valid JSON, Zod ensures correct schema
+4. **Reliable Model**: `gpt-4o-2024-08-06` provides consistent JSON output
+5. **Maintainability**: Clear separation of concerns with schemas
+6. **SDK Compatibility**: Uses stable Chat Completions API (openai@4.104.0)
 
 ## Data Architecture
 
@@ -603,6 +728,8 @@ Always return JSON:
 
 ## Development Workflow
 
+Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
+
 ### Getting Started
 ```bash
 # Install dependencies
@@ -626,6 +753,55 @@ npm run dev
 # Mongoose will auto-create collections on first use
 ```
 
+### Implementation Verification
+
+**CRITICAL**: After completing ANY implementation or code changes, you MUST verify the code passes both linting and building before considering the task complete.
+
+#### Required Checks (Must Pass)
+
+1. **Lint Check**: Ensure no ESLint errors or warnings
+   ```bash
+   npm run lint
+   # ✓ Must exit with code 0 (no errors, no warnings)
+   ```
+
+2. **Build Check**: Ensure TypeScript compilation succeeds
+   ```bash
+   npm run build
+   # ✓ Must complete successfully
+   # ✓ All routes must generate
+   # ✓ TypeScript validation must pass
+   ```
+
+#### When to Run These Checks
+
+- ✅ After implementing new features
+- ✅ After modifying existing code
+- ✅ After fixing bugs
+- ✅ After refactoring
+- ✅ Before marking tasks as complete
+- ✅ Before committing code
+
+#### What to Fix
+
+**Lint Issues:**
+- Remove unused imports and variables
+- Fix TypeScript type errors (`any` types, missing types)
+- Resolve React Hook dependency warnings
+- Fix exhaustive checks for discriminated unions
+
+**Build Issues:**
+- Fix TypeScript compilation errors
+- Resolve type mismatches
+- Handle null/undefined cases properly
+- Ensure all imports are valid
+
+**DO NOT:**
+- Skip these checks to save time
+- Commit code that doesn't pass lint and build
+- Mark tasks complete without verification
+- Use `@ts-ignore` or similar suppression comments unless absolutely necessary
+
 ### Deployment
 ```bash
 # Build for production
@@ -637,6 +813,8 @@ npm start
 # Deploy to Vercel (recommended)
 vercel deploy
 ```
+
+
 
 ## Testing Strategy
 
@@ -771,3 +949,178 @@ Never skip this process for UI changes. For backend-only changes (API routes, da
 **Core Principle:** Fun, imagination, cooperation over rules mastery
 
 **AI Must:** Be enthusiastic, keep it simple, make failures funny, celebrate successes
+
+---
+
+## Development Learnings & Common Pitfalls
+
+This section documents important lessons learned during development to help avoid repeating mistakes.
+
+### Framework-Specific Knowledge
+
+#### Next.js 16+ Breaking Changes
+**Issue:** In Next.js 16, route `params` are now Promises and must be awaited.
+
+**Problem Encountered:**
+```typescript
+// ❌ This breaks in Next.js 16 client components:
+export default function Page({ params }: { params: { id: string } }) {
+  const { id } = params // Error: params is a Promise
+}
+```
+
+**Solution:**
+```typescript
+// ✅ Use React's use() hook to unwrap the Promise:
+import { use } from 'react'
+
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params) // Correctly unwraps the Promise
+}
+```
+
+**Lesson:** Always check for framework version-specific breaking changes BEFORE implementing features. For Next.js upgrades, review the migration guide at https://nextjs.org/docs/app/building-your-application/upgrading
+
+**When This Matters:** Any dynamic route using `[param]` in the file path when using client components.
+
+---
+
+### Testing & Verification
+
+#### Verify Auto-Triggered Features Carefully
+**Issue:** Auto-start features that trigger without user interaction need thorough testing.
+
+**Problem Encountered:**
+- Implemented `startAdventure()` function to automatically introduce the player when adventure begins
+- Function exists and appears correct in code
+- During testing, no initial GM message appeared - player had to click "Continue" to see first message
+- Suggests feature isn't triggering correctly despite being implemented
+
+**Lesson:** For auto-triggered features:
+1. Don't just verify the code exists - verify it actually executes
+2. Add console logging or debugging to trace execution
+3. Test multiple times to catch intermittent issues
+4. Check for race conditions or timing issues
+5. Verify state updates propagate correctly to the UI
+
+**When This Matters:** Any feature that should trigger automatically without user action (auto-save, auto-load, welcome messages, etc.)
+
+---
+
+### Visual Bugs & UI Issues
+
+#### Always Check Rendered Output
+**Issue:** Code may work logically but render incorrectly.
+
+**Problem Encountered:**
+- Dice roll display showed broken output: `"Rolled: ="` and `"❌ Not quite..."`
+- Suggests missing data or incorrect conditional rendering
+- Visual bug that impacts user experience
+
+**Lesson:**
+1. Visual checks aren't just for design system compliance
+2. Also verify data displays correctly with realistic values
+3. Check edge cases: empty data, missing fields, zero values
+4. Use browser DevTools to inspect component state during rendering
+
+**When This Matters:** All UI components, especially those displaying dynamic data.
+
+---
+
+### Implementation Best Practices
+
+#### Research Framework Changes First
+**Anti-Pattern:** Implement based on older framework knowledge, then fix errors during testing.
+
+**Best Practice:**
+1. Before starting implementation, check for breaking changes in current versions
+2. Use Context7 MCP to get up-to-date documentation
+3. Search for "[Framework] [Version] breaking changes" or migration guides
+4. Review recent release notes
+
+**Time Saved:** 10-30 minutes of debugging can be avoided by 5 minutes of research upfront.
+
+---
+
+### Known Issues To Fix
+
+No known issues at this time. Both previously identified bugs have been resolved:
+- ✅ Auto-introduction feature (fixed 2026-01-07)
+- ✅ Dice roll display bug (fixed 2026-01-07)
+
+See "Resolved Issues" section below for details on the fixes.
+
+---
+
+### Resolved Issues
+
+#### 1. Auto-Introduction Feature (Fixed 2026-01-07)
+**Problem:** After adventure planning completed, no initial Game Master message appeared. Player had to click "Continue" to see the first message.
+
+**Root Cause:** React state timing issue. When `startAdventure()` was called, it tried to call `updateSession()` which checked `if (!session) return`. However, `setSession()` is asynchronous, so the `session` state variable was still null when `updateSession()` executed, causing it to return early without saving the message.
+
+**Fix:** Modified `updateSession()` to accept an optional `targetSessionId` parameter:
+```typescript
+async function updateSession(updates: Partial<AdventureSession>, targetSessionId?: string) {
+  const id = targetSessionId || session?.sessionId
+  if (!id) return
+  // ... rest of function
+}
+```
+
+Then passed the sessionId explicitly when calling from `startAdventure()`:
+```typescript
+await updateSession({
+  messages: [...sessionData.messages, aiMessage],
+  hearts: gameState.hearts,
+}, sessionId)
+```
+
+**Lesson:** Be careful with React state updates in async functions. State may not be updated immediately after `setState()` calls.
+
+**Files Modified:** `/app/play/[sessionId]/page.tsx` lines 184-186, 201-204, 445-461
+
+---
+
+#### 2. Dice Roll Display Bug (Fixed 2026-01-07)
+**Problem:** Dice roll results showed broken display: `"Rolled: ="` instead of proper values.
+
+**Root Cause:** The rendering code checked for `message.gameState?.rollResult` but didn't validate that the rollResult object contained all required fields. Some old database records had incomplete rollResult data.
+
+**Fix:** Added comprehensive null checks before rendering roll data:
+```typescript
+{message.gameState?.rollResult &&
+ message.gameState.rollResult.diceRoll !== undefined &&
+ message.gameState.rollResult.total !== undefined && (
+  // ... render dice roll display
+)}
+```
+
+Also added null checks for optional fields like `explodingRolls` and `skillBonus`.
+
+**Lesson:** Always validate data structure completeness, not just existence. Use `!== undefined` checks for numeric values that could be 0.
+
+**Files Modified:** `/app/play/[sessionId]/page.tsx` lines 585-606
+
+---
+
+### Development Workflow Reminders
+
+1. **Check framework versions first** - Especially after upgrades
+2. **Test auto-features thoroughly** - Don't assume they work because the code exists
+3. **Verify visual output** - Not just that code runs, but that it displays correctly
+4. **Use browser console** - Check for errors during testing
+5. **Document issues immediately** - Don't let bugs slip through QA
+
+---
+
+### Questions To Ask Before Marking "Complete"
+
+- ✅ Does the feature work as specified in requirements?
+- ✅ Does it handle edge cases?
+- ✅ Are there visual bugs or display issues?
+- ✅ Does it work on multiple test runs (not just once)?
+- ✅ Are there console errors or warnings?
+- ✅ Does the user experience match expectations?
+
+If you answer "no" or "unsure" to any of these, investigate further before marking complete

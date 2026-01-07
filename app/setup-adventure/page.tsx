@@ -69,8 +69,8 @@ function SetupAdventureContent() {
         localStorage.setItem('tiny-heroes-session-id', data.sessionId);
       }
 
-      // Navigate to play page
-      router.push('/play');
+      // Navigate to play page with session ID in URL
+      router.push(`/play/${data.sessionId}`);
     } catch (error) {
       console.error('Error creating session:', error);
       alert('Oops! Something went wrong. Please try again.');

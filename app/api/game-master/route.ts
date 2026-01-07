@@ -1,142 +1,154 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { openai, GAME_MASTER_MODEL } from '@/lib/openai'
-import { getCharacter, SKILL_NAMES } from '@/lib/characters'
-import { simulateSkillRoll, getTargetNumber } from '@/lib/game-logic'
-import { AdventureSession, Message, RollResult, SkillType } from '@/lib/types'
+import { getCharacter } from '@/lib/characters'
+import connectDB from '@/lib/mongodb'
+import SessionModel from '@/lib/models/Session'
+import { buildSystemPrompt } from './prompts/adventure'
+import { GameMasterResponseSchema, GameMasterAIResponse } from './schemas'
+import {
+  AdventureSession,
+  RollResult,
+  PendingRollRequest,
+  GameProgressState,
+} from '@/lib/types'
 
 interface GameMasterRequest {
   sessionId: string
   userMessage: string
   session: AdventureSession
+  rollResult?: RollResult // Present when user is submitting a roll result
 }
 
-interface GameMasterResponse {
+// Response when AI requests a roll
+interface RollRequestResponse {
+  type: 'roll_request'
+  pendingRoll: PendingRollRequest
+}
+
+// Response when AI narrates
+interface NarrativeResponse {
+  type: 'narrate'
   narrative: string
   hearts: number
-  rollResult?: RollResult
   isMonsterEncounter: boolean
   adventureComplete: boolean
+  gameProgress: GameProgressState
 }
 
+type GameMasterResponse = RollRequestResponse | NarrativeResponse
+
 /**
- * Build the system prompt for the AI Game Master
+ * Build the JSON payload sent to the AI
  */
-function buildSystemPrompt(session: AdventureSession): string {
+function buildAIPayload(
+  session: AdventureSession,
+  userMessage: string,
+  rollResult?: RollResult
+): string {
   const character = getCharacter(session.characterId)
 
-  return `You are an expert Game Guide for "Tiny Heroes RPG", a tabletop game for children aged 4-8.
+  const payload = {
+    adventurePlan: session.adventurePlan,
+    gameState: {
+      hearts: session.hearts,
+      currentScenarioId: session.gameProgress.currentScenarioId,
+      monsterAppeared: session.gameProgress.monsterAppeared,
+      adventureComplete: session.gameProgress.adventureComplete,
+      interactionCount: session.interactionCount,
+    },
+    playerSkills: character.skills,
+    playerInput: userMessage,
+    ...(rollResult && {
+      rollInfo: {
+        skill: rollResult.skill,
+        difficulty: rollResult.fumble ? 'fumble' : rollResult.success ? 'success' : 'failure',
+        roll: rollResult.total,
+        success: rollResult.success,
+        critical: rollResult.critical,
+      },
+    }),
+  }
 
-CORE RULES:
-- Four skills: Strong Stuff (💪), Smart Stuff (📚), Sneaky Stuff (⚡), Kind Stuff (❤️) - rated 0-3
-- Dice: Roll 1d6 + skill rating vs target number
-- If you roll a 6, roll again and add it (exploding dice, can chain infinitely)
-- Target numbers: Easy (4), Normal (6), Hard (8), Epic (10+)
-- Hearts: Players have 3 hearts ❤️❤️❤️ - losing all = tired/scared (NEVER dead)
-
-CURRENT PLAYER:
-- Character: ${session.characterName} the ${character.displayName}
-- Skills: Strong ${character.skills.strong}, Smart ${character.skills.smart}, Sneaky ${character.skills.sneaky}, Kind ${character.skills.kind}
-- Hearts: ${session.hearts}/3
-- Interaction: ${session.interactionCount}/5 (end at interaction 5 with monster encounter)
-
-ADVENTURE SETUP:
-- Setting: ${session.adventureSetting}
-${session.adventureInspiration ? `- Player's idea: ${session.adventureInspiration}` : ''}
-- Length: ${session.adventureLength === 'short' ? '5-10 minutes' : '15-20 minutes'}
-
-YOUR ROLE:
-1. Create an exciting, age-appropriate story that matches the setting
-2. When the player attempts something challenging, ASK FOR A SKILL ROLL
-3. Respond with JSON indicating which skill to roll and the difficulty
-4. After I simulate the roll, describe outcomes enthusiastically
-5. Make failures funny and silly, NEVER scary or harsh
-6. Celebrate high rolls and critical successes with excitement
-7. Build toward a monster encounter at interaction ${5 - session.interactionCount} more turns
-8. Keep language simple and friendly for ages 4-8
-
-TONE: Bright, cheerful, encouraging, funny, adventurous
-SAFETY: No death, no scary content, no harsh failures - make everything fun!
-
-IMPORTANT: When you need a dice roll, respond with this JSON structure:
-{
-  "action": "request_roll",
-  "skill": "strong" | "smart" | "sneaky" | "kind",
-  "difficulty": "easy" | "normal" | "hard" | "epic",
-  "narrative": "What the hero is attempting, described excitedly"
-}
-
-For regular narrative (no roll needed), respond with:
-{
-  "action": "narrate",
-  "narrative": "Your story response here",
-  "heartChange": 0 or -1 or +1,
-  "isMonsterEncounter": false,
-  "adventureComplete": false
-}
-
-For the FINAL monster encounter (at interaction 5), make it exciting but appropriate for young kids!`
+  return JSON.stringify(payload, null, 2)
 }
 
 /**
- * Parse AI response and handle different action types
+ * Process parsed AI response and create appropriate response
  */
-async function processAIResponse(
-  aiResponse: string,
+async function processAIResponseParsed(
+  parsed: GameMasterAIResponse,
   session: AdventureSession
 ): Promise<GameMasterResponse> {
   try {
-    const parsed = JSON.parse(aiResponse)
-
     // Handle roll request
     if (parsed.action === 'request_roll') {
-      const character = getCharacter(session.characterId)
-      const skillBonus = character.skills[parsed.skill as SkillType] || 0
-      const targetNumber = getTargetNumber(parsed.difficulty)
-
-      // Simulate the roll
-      const rollResult = simulateSkillRoll(
-        parsed.skill as SkillType,
-        skillBonus,
-        targetNumber
-      )
-
-      // Determine narrative based on success/failure
-      let narrative = parsed.narrative || ''
-      if (rollResult.success) {
-        narrative += `\n\n✨ You rolled a ${rollResult.total}! SUCCESS!`
-        if (rollResult.critical) {
-          narrative += ` 🌟 AMAZING! You got a 6!`
-        }
-      } else {
-        narrative += `\n\n😅 You rolled a ${rollResult.total}... Not quite! Something silly happens!`
+      const pendingRoll: PendingRollRequest = {
+        skill: parsed.skill,
+        difficulty: parsed.difficulty,
+        narrative: parsed.narrative,
+        context: `Testing ${parsed.skill} skill at ${parsed.difficulty} difficulty`,
       }
 
-      // Determine heart change based on fumble
-      const heartChange = rollResult.fumble && !rollResult.success ? -1 : 0
+      // Save pending roll to session
+      await connectDB()
+      const dbSession = await SessionModel.findOne({ sessionId: session.sessionId })
+      if (dbSession) {
+        dbSession.pendingRoll = pendingRoll
+        await dbSession.save()
+      }
 
       return {
-        narrative,
-        hearts: Math.max(0, session.hearts + heartChange),
-        rollResult,
-        isMonsterEncounter: session.interactionCount >= 4,
-        adventureComplete: session.interactionCount >= 4,
+        type: 'roll_request',
+        pendingRoll,
       }
     }
 
-    // Handle regular narration
-    return {
-      narrative: parsed.narrative || aiResponse,
-      hearts: Math.max(0, Math.min(3, session.hearts + (parsed.heartChange || 0))),
-      isMonsterEncounter: parsed.isMonsterEncounter || false,
-      adventureComplete: parsed.adventureComplete || false,
+    // Handle narration
+    if (parsed.action === 'narrate') {
+      const heartChange = parsed.heartChange || 0
+      const newHearts = Math.max(0, Math.min(3, session.hearts + heartChange))
+
+      // Update game progress
+      const gameProgress: GameProgressState = {
+        currentScenarioId: session.gameProgress.currentScenarioId,
+        monsterAppeared: parsed.isMonsterEncounter || session.gameProgress.monsterAppeared,
+        adventureComplete: parsed.adventureComplete || session.gameProgress.adventureComplete,
+      }
+
+      // Clear pending roll from session
+      await connectDB()
+      const dbSession = await SessionModel.findOne({ sessionId: session.sessionId })
+      if (dbSession) {
+        dbSession.pendingRoll = undefined
+        dbSession.gameProgress = gameProgress
+        await dbSession.save()
+      }
+
+      return {
+        type: 'narrate',
+        narrative: parsed.narrative,
+        hearts: newHearts,
+        isMonsterEncounter: parsed.isMonsterEncounter || false,
+        adventureComplete: parsed.adventureComplete || false,
+        gameProgress,
+      }
     }
+
+    // This should never be reached due to Zod validation ensuring parsed.action is either 'request_roll' or 'narrate'
+    // TypeScript knows this is unreachable, so we use never type
+    const _exhaustiveCheck: never = parsed
+    throw new Error(`Unhandled action type: ${(_exhaustiveCheck as GameMasterAIResponse).action}`)
   } catch (error) {
-    // If JSON parsing fails, treat as plain narrative
+    console.error('Error processing AI response:', error)
+
+    // Fallback to plain narration
     return {
-      narrative: aiResponse,
+      type: 'narrate',
+      narrative: 'Hmm, the Game Master needs a moment to think... Try again!',
       hearts: session.hearts,
       isMonsterEncounter: false,
       adventureComplete: false,
+      gameProgress: session.gameProgress,
     }
   }
 }
@@ -144,57 +156,74 @@ async function processAIResponse(
 export async function POST(request: NextRequest) {
   try {
     const body: GameMasterRequest = await request.json()
-    const { userMessage, session } = body
+    const { userMessage, session, rollResult } = body
 
-    // Build conversation history for OpenAI
-    const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
-      {
-        role: 'system',
-        content: buildSystemPrompt(session),
-      },
-    ]
+    // Validate session has adventure plan
+    if (!session.adventurePlan) {
+      return NextResponse.json(
+        { error: 'Adventure plan not found. Please generate a plan first.' },
+        { status: 400 }
+      )
+    }
+
+    // Build system prompt with session context
+    const systemPrompt = buildSystemPrompt(session)
+    const userPayload = buildAIPayload(session, userMessage, rollResult)
+
+    // Build input with conversation history as a formatted string
+    let conversationContext = ''
 
     // Add recent message history (last 5 messages for context)
     const recentMessages = session.messages.slice(-5)
     for (const msg of recentMessages) {
       if (msg.role === 'user' || msg.role === 'assistant') {
-        messages.push({
-          role: msg.role,
-          content: msg.content,
-        })
+        conversationContext += `${msg.role === 'user' ? 'Player' : 'GM'}: ${msg.content}\n\n`
       }
     }
 
-    // Add current user message
-    messages.push({
-      role: 'user',
-      content: userMessage,
-    })
-
-    // Call OpenAI API
+    // Add current user message with payload
+    conversationContext += `Current turn:\n${userPayload}`
+    
+    // Call OpenAI Chat Completions API with JSON output
     const completion = await openai.chat.completions.create({
       model: GAME_MASTER_MODEL,
-      messages,
-      temperature: 0.8, // Creative but consistent
-      max_tokens: 500,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: conversationContext },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.8,
     })
 
-    const aiResponse = completion.choices[0]?.message?.content || 'The adventure continues...'
+    const message = completion.choices[0]?.message
+
+    if (!message?.content) {
+      throw new Error('Failed to get AI response')
+    }
+
+    // Parse and validate the JSON response
+    const jsonContent = JSON.parse(message.content)
+    const parsed = GameMasterResponseSchema.parse(jsonContent)
 
     // Process the AI response
-    const gameState = await processAIResponse(aiResponse, session)
+    const gameState = await processAIResponseParsed(parsed, session)
 
     return NextResponse.json(gameState)
   } catch (error) {
     console.error('Error in game master API:', error)
 
-    // Return a friendly fallback response
     return NextResponse.json(
       {
-        narrative: "Hmm, the Game Master needs a moment to think... Try again!",
-        hearts: (await request.json()).session.hearts,
+        type: 'narrate',
+        narrative: 'Hmm, the Game Master needs a moment to think... Try again!',
+        hearts: 3,
         isMonsterEncounter: false,
         adventureComplete: false,
+        gameProgress: {
+          currentScenarioId: 1,
+          monsterAppeared: false,
+          adventureComplete: false,
+        },
       },
       { status: 500 }
     )

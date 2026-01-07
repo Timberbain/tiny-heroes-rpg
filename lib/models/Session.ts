@@ -22,6 +22,48 @@ const MessageSchema = new Schema({
   },
 })
 
+const AdventureMonsterSchema = new Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  isScary: { type: Boolean, default: false },
+})
+
+const AdventureScenarioSchema = new Schema({
+  id: { type: Number, required: true },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  location: { type: String, required: true },
+  keyNPCs: { type: [String], default: [] },
+  likelySkills: { type: [String], default: [] },
+  hasChallenge: { type: Boolean, default: true },
+  notesForGM: { type: String, default: '' },
+})
+
+const AdventurePlanSchema = new Schema({
+  title: { type: String, required: true },
+  setting: { type: String, required: true },
+  heroName: { type: String, required: true },
+  recommendedAgeRange: { type: String, default: '4-8' },
+  overallGoal: { type: String, required: true },
+  monster: { type: AdventureMonsterSchema, required: true },
+  scenarios: { type: [AdventureScenarioSchema], required: true },
+  expectedNumberOfScenes: { type: Number, default: 5 },
+  designNotesForGM: { type: String, default: '' },
+})
+
+const GameProgressStateSchema = new Schema({
+  currentScenarioId: { type: Number, default: 1 },
+  monsterAppeared: { type: Boolean, default: false },
+  adventureComplete: { type: Boolean, default: false },
+})
+
+const PendingRollRequestSchema = new Schema({
+  skill: { type: String, enum: ['strong', 'smart', 'sneaky', 'kind'], required: true },
+  difficulty: { type: String, enum: ['easy', 'normal', 'hard', 'epic'], required: true },
+  narrative: { type: String, required: true },
+  context: { type: String, required: true },
+})
+
 const SessionSchema = new Schema<AdventureSession>(
   {
     sessionId: { type: String, required: true, unique: true, index: true },
@@ -44,6 +86,20 @@ const SessionSchema = new Schema<AdventureSession>(
     interactionCount: { type: Number, default: 0 },
     isComplete: { type: Boolean, default: false },
     completedAt: { type: Date },
+    // Adventure planning fields
+    adventurePlan: { type: AdventurePlanSchema },
+    planGeneratedAt: { type: Date },
+    planningStatus: {
+      type: String,
+      enum: ['pending', 'generating', 'ready', 'failed'],
+      default: 'pending',
+    },
+    planningError: { type: String },
+    gameProgress: {
+      type: GameProgressStateSchema,
+      default: () => ({ currentScenarioId: 1, monsterAppeared: false, adventureComplete: false }),
+    },
+    pendingRoll: { type: PendingRollRequestSchema },
   },
   {
     timestamps: true,

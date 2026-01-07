@@ -16,7 +16,8 @@
     "openai": "^4.78.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "uuid": "^11.0.4"
+    "uuid": "^11.0.4",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",

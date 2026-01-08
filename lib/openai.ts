@@ -8,4 +8,4 @@ export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-export const GAME_MASTER_MODEL = 'gpt-4o-2024-08-06'
+export const GAME_MASTER_MODEL = 'gpt-4o-mini'

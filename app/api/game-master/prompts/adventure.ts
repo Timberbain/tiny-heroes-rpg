@@ -209,7 +209,7 @@ Do NOT:
 - Ask the player what they want to do (they chose Continue for a reason)
 - End the story prematurely
 
-Always move the story forward in an engaging way.`
+Always move the story forward in an engaging way and avoid stagnation and repetition.`
 }
 
 /**

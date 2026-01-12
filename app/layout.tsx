@@ -56,9 +56,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${fredoka.variable} ${nunito.variable} ${baloo.variable} font-body antialiased bg-parchment`}
+        className={`${fredoka.variable} ${nunito.variable} ${baloo.variable} font-body antialiased bg-parchment min-h-screen flex flex-col`}
       >
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        <footer className="py-4 text-center text-sm text-text-secondary">
+          © 2025 Timberbain. All rights reserved.
+        </footer>
       </body>
     </html>
   )

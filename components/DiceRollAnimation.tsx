@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { RollResult } from '@/lib/types'
 
 interface DiceRollAnimationProps {
@@ -11,6 +12,7 @@ interface DiceRollAnimationProps {
 type Phase = 'rolling' | 'result' | 'breakdown'
 
 export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAnimationProps) {
+  const t = useTranslations('DiceRoll')
   const [phase, setPhase] = useState<Phase>('rolling')
   const [displayedNumber, setDisplayedNumber] = useState(1)
 
@@ -65,21 +67,21 @@ export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAn
             {/* Rolling text */}
             {phase === 'rolling' && (
               <div className="font-heading text-2xl sm:text-3xl text-text-primary animate-pulse">
-                Rolling the dice...
+                {t('rolling')}
               </div>
             )}
 
             {/* Exploding dice indicator */}
             {phase === 'result' && rollResult.diceRoll === 6 && (
               <div className="font-heading text-xl sm:text-2xl text-adventure-yellow animate-bounce">
-                ⚡ EXPLODING! Roll again! ⚡
+                {t('exploding')}
               </div>
             )}
 
             {/* Fumble indicator */}
             {phase === 'result' && rollResult.diceRoll === 1 && (
               <div className="font-heading text-xl sm:text-2xl text-adventure-red animate-wiggle">
-                😅 Oops! Something silly happens!
+                {t('fumble')}
               </div>
             )}
           </>
@@ -100,7 +102,7 @@ export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAn
                 animate-celebrate
               `}
             >
-              {rollResult.success ? '✨ SUCCESS! ✨' : '😅 Not Quite!'}
+              {rollResult.success ? t('success') : t('notQuite')}
             </div>
 
             {/* Roll Breakdown */}
@@ -121,7 +123,7 @@ export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAn
               </div>
 
               <div className="font-body text-lg text-text-secondary">
-                vs Target Number: {rollResult.targetNumber}
+                {t('vsTarget', { target: rollResult.targetNumber })}
               </div>
             </div>
 
@@ -129,12 +131,12 @@ export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAn
             <div className="flex flex-wrap justify-center gap-3 mb-6">
               {rollResult.critical && (
                 <div className="inline-block bg-adventure-yellow text-white px-4 py-2 rounded-full font-heading text-base sm:text-lg border-3 border-border-dark">
-                  🌟 Critical!
+                  {t('criticalBadge')}
                 </div>
               )}
               {rollResult.fumble && (
                 <div className="inline-block bg-adventure-red text-white px-4 py-2 rounded-full font-heading text-base sm:text-lg border-3 border-border-dark">
-                  😂 Fumble!
+                  {t('fumbleBadge')}
                 </div>
               )}
             </div>
@@ -144,7 +146,7 @@ export default function DiceRollAnimation({ rollResult, onComplete }: DiceRollAn
               onClick={onComplete}
               className="w-full font-heading text-xl sm:text-2xl font-bold px-8 py-4 bg-adventure-blue text-white border-4 border-border-dark rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all duration-200"
             >
-              Continue Adventure →
+              {t('continueButton')}
             </button>
           </>
         )}

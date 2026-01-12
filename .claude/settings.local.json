@@ -28,7 +28,11 @@
       "Bash(npm info:*)",
       "mcp__playwright__browser_run_code",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npx --version)",
+      "Bash(node --version:*)",
+      "Bash(npx:*)",
+      "Bash(git push)"
     ]
   }
 }

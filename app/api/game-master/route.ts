@@ -10,7 +10,53 @@ import {
   RollResult,
   PendingRollRequest,
   GameProgressState,
+  Locale,
 } from '@/lib/types'
+
+// Server-side translations for roll context
+const ROLL_CONTEXT_TRANSLATIONS: Record<Locale, {
+  skills: Record<string, string>
+  difficulties: Record<string, string>
+  template: string
+}> = {
+  en: {
+    skills: {
+      strong: 'Strong Stuff',
+      smart: 'Smart Stuff',
+      sneaky: 'Sneaky Stuff',
+      kind: 'Kind Stuff',
+    },
+    difficulties: {
+      easy: 'easy',
+      normal: 'normal',
+      hard: 'hard',
+      epic: 'epic',
+    },
+    template: 'Testing {skill} at {difficulty} difficulty',
+  },
+  sv: {
+    skills: {
+      strong: 'Starka grejer',
+      smart: 'Smarta grejer',
+      sneaky: 'Smygiga grejer',
+      kind: 'Snälla grejer',
+    },
+    difficulties: {
+      easy: 'lätt',
+      normal: 'normal',
+      hard: 'svår',
+      epic: 'episk',
+    },
+    template: 'Testar {skill} på {difficulty} svårighetsgrad',
+  },
+}
+
+function getRollContext(skill: string, difficulty: string, locale: Locale = 'en'): string {
+  const t = ROLL_CONTEXT_TRANSLATIONS[locale] || ROLL_CONTEXT_TRANSLATIONS.en
+  const skillName = t.skills[skill] || skill
+  const difficultyName = t.difficulties[difficulty] || difficulty
+  return t.template.replace('{skill}', skillName).replace('{difficulty}', difficultyName)
+}
 
 interface GameMasterRequest {
   sessionId: string
@@ -86,7 +132,7 @@ async function processAIResponseParsed(
         skill: parsed.skill,
         difficulty: parsed.difficulty,
         narrative: parsed.narrative,
-        context: `Testing ${parsed.skill} skill at ${parsed.difficulty} difficulty`,
+        context: getRollContext(parsed.skill, parsed.difficulty, session.locale),
       }
 
       // Save pending roll to session

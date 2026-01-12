@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 interface PlanningErrorProps {
   error: string
   onRetry: () => void
@@ -7,6 +9,8 @@ interface PlanningErrorProps {
 }
 
 export default function PlanningError({ error, onRetry, onCancel }: PlanningErrorProps) {
+  const t = useTranslations('PlanningError')
+
   return (
     <div className="fixed inset-0 z-50 bg-parchment flex items-center justify-center p-4">
       <div className="bg-cloud border-4 border-border-dark rounded-2xl shadow-lg p-8 max-w-md w-full text-center animate-fadeIn">
@@ -15,12 +19,12 @@ export default function PlanningError({ error, onRetry, onCancel }: PlanningErro
 
         {/* Title */}
         <h2 className="font-heading text-2xl sm:text-3xl font-bold text-text-primary mb-4">
-          Oops! Something went wrong
+          {t('title')}
         </h2>
 
         {/* Message */}
         <p className="font-body text-lg text-text-secondary mb-6">
-          The adventure couldn&apos;t start right now. Let&apos;s try again!
+          {t('description')}
         </p>
 
         {/* Error details (optional, for debugging) */}
@@ -42,7 +46,7 @@ export default function PlanningError({ error, onRetry, onCancel }: PlanningErro
             onClick={onRetry}
             className="font-heading text-xl font-bold px-8 py-4 bg-adventure-blue text-white border-4 border-border-dark rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all duration-200"
           >
-            🔄 Try Again
+            🔄 {t('retryButton')}
           </button>
 
           {/* Go Back Button */}
@@ -50,7 +54,7 @@ export default function PlanningError({ error, onRetry, onCancel }: PlanningErro
             onClick={onCancel}
             className="font-heading text-xl font-bold px-8 py-4 bg-white text-text-primary border-4 border-border-dark rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all duration-200"
           >
-            ← Go Back
+            ← {t('cancelButton')}
           </button>
         </div>
       </div>

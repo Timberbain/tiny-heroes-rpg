@@ -4,17 +4,40 @@
 // - Target numbers: Easy (4), Normal (6), Hard (8), Epic (10+)
 // - Hearts: Players have 3 hearts ❤️❤️❤️ - losing all = tired/scared (NEVER dead)
 
-import { AdventureSession } from '@/lib/types'
+import { AdventureSession, Locale } from '@/lib/types'
 import { getCharacter } from '@/lib/characters'
+
+/**
+ * Language-specific instructions for the AI Game Master
+ */
+const LANGUAGE_INSTRUCTIONS: Record<Locale, string> = {
+  en: `
+LANGUAGE: English
+- Respond ONLY in English
+- Use simple, friendly language for children aged 4-8
+- Use exciting words like "Amazing!", "Wonderful!", "Fantastic!"
+- Keep sentences short and easy to read aloud
+`,
+  sv: `
+LANGUAGE: Swedish (Svenska)
+- Respond ONLY in Swedish (Svenska)
+- Use simple, friendly Swedish for children aged 4-8
+- Use exciting words like "Fantastiskt!", "Underbart!", "Häftigt!", "Wow!"
+- Keep sentences short and easy to understand
+- The adventure plan is already in Swedish - continue in Swedish
+- Use Swedish expressions naturally (e.g., "Vad modig du är!", "Bra jobbat!")
+`,
+}
 
 /**
  * Build a dynamic system prompt for the Game Master based on the current session
  */
 export function buildSystemPrompt(session: AdventureSession): string {
   const character = getCharacter(session.characterId)
+  const locale = session.locale || 'en'
 
   return `You are the Game Master for "${session.characterName} the ${character.displayName}".
-
+${LANGUAGE_INSTRUCTIONS[locale]}
 CURRENT HERO:
 - Name: ${session.characterName}
 - Class: ${character.displayName}

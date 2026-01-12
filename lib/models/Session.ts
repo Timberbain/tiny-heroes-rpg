@@ -82,6 +82,7 @@ const SessionSchema = new Schema<AdventureSession>(
     },
     adventureLength: { type: String, enum: ['short', 'long'], required: true },
     adventureInspiration: { type: String, default: '' },
+    locale: { type: String, enum: ['en', 'sv'], default: 'en', required: true },
     messages: { type: [MessageSchema], default: [] },
     interactionCount: { type: Number, default: 0 },
     isComplete: { type: Boolean, default: false },

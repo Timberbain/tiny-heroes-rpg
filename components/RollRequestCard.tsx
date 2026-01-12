@@ -1,7 +1,8 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { CharacterId, PendingRollRequest } from '@/lib/types'
-import { getCharacter, SKILL_ICONS, SKILL_NAMES } from '@/lib/characters'
+import { getCharacter } from '@/lib/characters'
 import { getTargetNumber } from '@/lib/game-logic'
 
 interface RollRequestCardProps {
@@ -20,6 +21,13 @@ const DIFFICULTY_STYLES: Record<string, string> = {
   epic: 'text-adventure-red',
 }
 
+const SKILL_ICONS: Record<string, string> = {
+  strong: '💪',
+  smart: '📚',
+  sneaky: '⚡',
+  kind: '❤️',
+}
+
 export default function RollRequestCard({
   pendingRoll,
   characterId,
@@ -28,18 +36,16 @@ export default function RollRequestCard({
   isRolling,
 }: RollRequestCardProps) {
   const character = getCharacter(characterId)
+  const t = useTranslations('RollRequest')
+  const ts = useTranslations('Skills')
   const skillIcon = SKILL_ICONS[pendingRoll.skill]
-  const skillName = SKILL_NAMES[pendingRoll.skill]
+  const skillName = ts(`${pendingRoll.skill}.name`)
   const targetNumber = getTargetNumber(pendingRoll.difficulty)
   const difficultyStyle = DIFFICULTY_STYLES[pendingRoll.difficulty] || DIFFICULTY_STYLES.normal
+  const difficultyLabel = t(`difficulty.${pendingRoll.difficulty}`)
 
   return (
     <div className="bg-cloud border-4 border-border-dark rounded-2xl shadow-lg p-6 animate-fadeIn">
-      {/* AI Narrative */}
-      {/* <div className="font-body text-lg text-text-primary mb-6 leading-relaxed">
-        {pendingRoll.narrative}
-      </div> */}
-
       {/* What you're attempting */}
       <div className="font-heading text-base text-text-secondary mb-4 text-center">
         {pendingRoll.context}
@@ -63,12 +69,12 @@ export default function RollRequestCard({
 
         {/* Difficulty Indicator */}
         <div className="text-center">
-          <div className="font-body text-sm text-text-secondary">Need</div>
+          <div className="font-body text-sm text-text-secondary">{t('need')}</div>
           <div className={`font-heading text-3xl md:text-4xl font-bold ${difficultyStyle}`}>
             {targetNumber}+
           </div>
           <div className="font-body text-sm text-text-secondary capitalize">
-            ({pendingRoll.difficulty})
+            ({difficultyLabel})
           </div>
         </div>
       </div>
@@ -86,12 +92,12 @@ export default function RollRequestCard({
         {isRolling ? (
           <span className="flex items-center justify-center gap-3">
             <span className="animate-spin text-4xl">🎲</span>
-            Rolling...
+            {t('rolling')}
           </span>
         ) : (
           <span className="flex items-center justify-center gap-3">
             <span className="text-4xl">🎲</span>
-            Roll the Dice!
+            {t('rollButton')}
           </span>
         )}
       </button>

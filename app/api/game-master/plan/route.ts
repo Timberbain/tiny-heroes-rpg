@@ -73,12 +73,13 @@ export async function POST(request: NextRequest) {
     session.planningStatus = 'generating'
     await session.save()
 
-    // Build planning prompt
+    // Build planning prompt with locale
     const systemPrompt = buildPlanningPrompt({
       setting: session.adventureSetting,
       playerName: session.characterName,
       length: session.adventureLength,
       adventureInspiration: session.adventureInspiration,
+      locale: session.locale || 'en',
     })
 
     // Call OpenAI Chat Completions API with JSON output

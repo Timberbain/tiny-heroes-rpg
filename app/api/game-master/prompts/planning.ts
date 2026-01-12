@@ -1,12 +1,38 @@
+import { Locale } from '@/lib/types'
+
 interface PlanningPromptParams {
   setting: string;
   playerName: string;
   length: 'short' | 'long';
   adventureInspiration?: string;
+  locale?: Locale;
+}
+
+/**
+ * Language-specific instructions for adventure plan generation
+ */
+const PLANNING_LANGUAGE_INSTRUCTIONS: Record<Locale, string> = {
+  en: `
+LANGUAGE: English
+- Generate ALL content in English
+- Use simple, fun words that children aged 4-8 can understand
+- Adventure title, setting, scenarios, monster name - everything in English
+`,
+  sv: `
+LANGUAGE: Swedish (Svenska)
+- Generate ALL content in Swedish (Svenska)
+- Use simple, fun Swedish words that children aged 4-8 can understand
+- Adventure title, setting, scenarios, monster name - everything in Swedish
+- Use Swedish names for characters and places (e.g., "Trollskogen", "Glittergrottan", "Sagolandet")
+- Example monster names: "Kluddiga Klansen", "Fnissiga Fansen", "Bubblige Bansen", "Pilliga Pansen"
+`,
 }
 
 export function buildPlanningPrompt(params: PlanningPromptParams): string {
+  const locale = params.locale || 'en'
+
   return `You are an RPG adventure planner for a kids' story game.
+${PLANNING_LANGUAGE_INSTRUCTIONS[locale]}
 
 Your job is to create a simple, exciting adventure *plan* that will later guide a separate Game Master model. This plan is NOT the story itself but a list of high-level scenarios (steps) that the Game Master will expand into scenes.
 

@@ -1,6 +1,29 @@
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { setRequestLocale } from 'next-intl/server'
+import { Link } from '@/src/i18n/navigation'
 
-export default function Home() {
+type Props = {
+  params: Promise<{ locale: string }>
+}
+
+export default async function Home({ params }: Props) {
+  const { locale } = await params
+  setRequestLocale(locale)
+
+  return <HomeContent />
+}
+
+function HomeContent() {
+  const t = useTranslations('Home')
+  const tc = useTranslations('Characters')
+
+  const heroes = [
+    { id: 'sorceress', colorClass: 'bg-adventure-red', emoji: '🔮' },
+    { id: 'knight', colorClass: 'bg-adventure-blue', emoji: '⚔️' },
+    { id: 'ranger', colorClass: 'bg-adventure-green', emoji: '🏹' },
+    { id: 'bard', colorClass: 'bg-adventure-yellow', emoji: '🎵' },
+  ] as const
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-linear-to-br from-parchment to-parchment-dark relative overflow-hidden">
       {/* Decorative background elements */}
@@ -15,11 +38,11 @@ export default function Home() {
         {/* Main hero section */}
         <div className="text-center mb-12 bg-cloud border-5 border-border-dark rounded-3xl shadow-xl p-8 md:p-12">
           <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-text-primary mb-6 leading-tight">
-            Tiny Heroes RPG
+            {t('title')}
           </h1>
 
           <p className="font-body text-lg sm:text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto leading-relaxed mb-8">
-            Embark on an amazing adventure! Choose your hero, roll the dice, and create your own magical story! ✨
+            {t('subtitle')} ✨
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -38,7 +61,7 @@ export default function Home() {
                 w-full sm:w-auto
               "
             >
-              Start Adventure! 🎮
+              {t('startButton')} 🎮
             </Link>
 
             <Link
@@ -55,21 +78,16 @@ export default function Home() {
                 w-full sm:w-auto
               "
             >
-              View Design System
+              {t('designSystem')}
             </Link>
           </div>
         </div>
 
         {/* Character preview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {[
-            { name: 'Sorceress', colorClass: 'bg-adventure-red', emoji: '🔮' },
-            { name: 'Knight', colorClass: 'bg-adventure-blue', emoji: '⚔️' },
-            { name: 'Ranger', colorClass: 'bg-adventure-green', emoji: '🏹' },
-            { name: 'Bard', colorClass: 'bg-adventure-yellow', emoji: '🎵' },
-          ].map((hero) => (
+          {heroes.map((hero) => (
             <div
-              key={hero.name}
+              key={hero.id}
               className={`
                 ${hero.colorClass} text-white
                 border-4 border-border-dark rounded-xl
@@ -83,7 +101,7 @@ export default function Home() {
             >
               <div className="text-4xl md:text-5xl mb-2">{hero.emoji}</div>
               <div className="font-heading text-lg md:text-xl font-bold">
-                {hero.name}
+                {tc(`${hero.id}.displayName`)}
               </div>
             </div>
           ))}
@@ -92,34 +110,34 @@ export default function Home() {
         {/* Features section */}
         <div className="mt-12 bg-cloud border-4 border-border-dark rounded-2xl shadow-lg p-6 md:p-8">
           <h2 className="font-heading text-2xl md:text-3xl font-bold text-text-primary mb-6 text-center">
-            What Makes This Special?
+            {t('features.title')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="text-4xl mb-3">🎲</div>
               <h3 className="font-heading text-xl font-bold text-text-primary mb-2">
-                Roll Dice!
+                {t('features.dice.title')}
               </h3>
               <p className="font-body text-base text-text-secondary">
-                Exciting dice rolls with exploding 6s make every action thrilling!
+                {t('features.dice.description')}
               </p>
             </div>
             <div className="text-center">
               <div className="text-4xl mb-3">🤖</div>
               <h3 className="font-heading text-xl font-bold text-text-primary mb-2">
-                AI Guide
+                {t('features.ai.title')}
               </h3>
               <p className="font-body text-base text-text-secondary">
-                A smart game master creates unique adventures just for you!
+                {t('features.ai.description')}
               </p>
             </div>
             <div className="text-center">
               <div className="text-4xl mb-3">❤️</div>
               <h3 className="font-heading text-xl font-bold text-text-primary mb-2">
-                Always Fun
+                {t('features.fun.title')}
               </h3>
               <p className="font-body text-base text-text-secondary">
-                Failures are funny, successes are celebrated - never scary!
+                {t('features.fun.description')}
               </p>
             </div>
           </div>

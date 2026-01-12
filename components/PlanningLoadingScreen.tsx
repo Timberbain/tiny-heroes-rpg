@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 import { CharacterId } from '@/lib/types'
 import { getCharacter } from '@/lib/characters'
 
@@ -10,33 +11,35 @@ interface PlanningLoadingScreenProps {
   characterName: string
 }
 
-const LOADING_MESSAGES = [
-  'Painting magical lands...',
-  'Waking up friendly creatures...',
-  'Hiding treasures to find...',
-  'Setting up exciting challenges...',
-  'Preparing your adventure!',
-  'Adding sparkles and wonder...',
-  'Making everything cozy and fun...',
-]
-
 export default function PlanningLoadingScreen({
   characterId,
   characterName,
 }: PlanningLoadingScreenProps) {
   const character = getCharacter(characterId)
   const [messageIndex, setMessageIndex] = useState(0)
+  const t = useTranslations('Planning')
+
+  // Get translated messages
+  const messages = [
+    t('messages.0'),
+    t('messages.1'),
+    t('messages.2'),
+    t('messages.3'),
+    t('messages.4'),
+    t('messages.5'),
+    t('messages.6'),
+  ]
 
   // Cycle through loading messages every 2.5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length)
+      setMessageIndex((prev) => (prev + 1) % messages.length)
     }, 2500)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [messages.length])
 
-  const currentMessage = LOADING_MESSAGES[messageIndex]
+  const currentMessage = messages[messageIndex]
 
   return (
     <div className="fixed inset-0 z-50 bg-parchment flex items-center justify-center p-4">
@@ -55,12 +58,12 @@ export default function PlanningLoadingScreen({
 
         {/* Title */}
         <h2 className="font-heading text-2xl sm:text-3xl font-bold text-text-primary mb-3">
-          Creating Your Adventure...
+          {t('creating')}
         </h2>
 
         {/* Character name */}
         <p className="font-heading text-lg sm:text-xl text-text-secondary mb-6">
-          Get ready, {characterName}!
+          {t('getReady', { name: characterName })}
         </p>
 
         {/* Loading message that cycles */}

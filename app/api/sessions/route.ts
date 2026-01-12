@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       adventureSetting: body.adventureSetting || 'fantasy',
       adventureLength: body.adventureLength || 'short',
       adventureInspiration: body.adventureInspiration || '',
+      locale: body.locale || 'en',
       messages: [],
       interactionCount: 0,
       isComplete: false,

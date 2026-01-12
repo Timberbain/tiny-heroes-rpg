@@ -1,0 +1,183 @@
+{
+  "Common": {
+    "loading": "Laddar...",
+    "error": "Hoppsan! Något gick fel",
+    "retry": "Försök igen",
+    "back": "Tillbaka",
+    "continue": "Fortsätt",
+    "or": "eller"
+  },
+  "Home": {
+    "title": "Små Hjältar RPG",
+    "subtitle": "Ge dig ut på ett fantastiskt äventyr! Välj din hjälte, kasta tärningen och skapa din egen magiska berättelse!",
+    "startButton": "Starta äventyr!",
+    "designSystem": "Visa designsystem",
+    "features": {
+      "title": "Vad gör detta speciellt?",
+      "dice": {
+        "title": "Kasta tärning!",
+        "description": "Spännande tärningskast med exploderande 6:or gör varje handling spännande!"
+      },
+      "ai": {
+        "title": "AI-guide",
+        "description": "En smart spelledare skapar unika äventyr bara för dig!"
+      },
+      "fun": {
+        "title": "Alltid roligt",
+        "description": "Misslyckanden är roliga, framgångar firas - aldrig läskigt!"
+      }
+    }
+  },
+  "SelectCharacter": {
+    "title": "Välj din hjälte!",
+    "subtitle": "Välj en modig hjälte att ge dig ut på fantastiska äventyr med! Varje hjälte är speciell och bra på olika saker.",
+    "specialSkills": "Speciella färdigheter:",
+    "chooseButton": "Välj {characterName}!",
+    "selected": "Vald!",
+    "backToHome": "Tillbaka hem"
+  },
+  "Characters": {
+    "sorceress": {
+      "displayName": "Trollkvinna",
+      "archetype": "Magisk lärd",
+      "description": "En person som kan trolla och göra magiska saker"
+    },
+    "knight": {
+      "displayName": "Riddare",
+      "archetype": "Modig beskyddare",
+      "description": "En modig krigare som skyddar vänner och kämpar för det goda"
+    },
+    "ranger": {
+      "displayName": "Skogsväktare",
+      "archetype": "Snabb jägare",
+      "description": "En skicklig jägare som rör sig tyst och känner skogen"
+    },
+    "bard": {
+      "displayName": "Skald",
+      "archetype": "Vänlig berättare",
+      "description": "En glad underhållare som skaffar vänner och inspirerar andra"
+    }
+  },
+  "Skills": {
+    "strong": {
+      "name": "Starka grejer",
+      "description": "Klättra, hoppa, lyfta, slåss, krossa saker"
+    },
+    "smart": {
+      "name": "Smarta grejer",
+      "description": "Lösa pussel, komma ihåg fakta, upptäcka ledtrådar"
+    },
+    "sneaky": {
+      "name": "Smygiga grejer",
+      "description": "Gömma sig, smyga, springa snabbt, ducka"
+    },
+    "kind": {
+      "name": "Snälla grejer",
+      "description": "Prata, skaffa vänner, hjälpa andra, lugna djur"
+    },
+    "ratings": {
+      "0": "Inte bra än",
+      "1": "Nybörjare",
+      "2": "Tränad",
+      "3": "Expert"
+    }
+  },
+  "SetupAdventure": {
+    "title": "Förbered ditt äventyr!",
+    "subtitle": "Berätta för oss om din hjälte och vilken typ av äventyr du vill ge dig ut på!",
+    "yourHero": "Din hjälte",
+    "heroName": {
+      "label": "Vad heter din hjälte?",
+      "placeholder": "Skriv ett modigt namn..."
+    },
+    "setting": {
+      "label": "Vilken typ av äventyr?",
+      "fantasy": "Fantasy (slott, drakar, magi!)",
+      "scifi": "Rymdäventyr (raketer, utomjordingar, planeter!)",
+      "horror": "Lagom läskigt (snälla monster, inte läskigt!)",
+      "custom": "Överraska mig!"
+    },
+    "length": {
+      "label": "Hur långt ska äventyret vara?",
+      "short": "Kort (5-10 minuter)",
+      "long": "Långt (15-20 minuter)"
+    },
+    "inspiration": {
+      "label": "Några idéer till berättelsen? (Valfritt)",
+      "placeholder": "Berätta vad du vill ska hända... (en borttappad kattunge, en gömd skatt, osv.)",
+      "charCount": "{count}/200 tecken"
+    },
+    "startButton": "Starta äventyr!",
+    "starting": "Startar äventyr...",
+    "changeHero": "Byt hjälte",
+    "validation": {
+      "nameRequired": "Ge din hjälte ett namn!"
+    },
+    "error": "Hoppsan! Något gick fel. Försök igen."
+  },
+  "Play": {
+    "loading": "Laddar ditt äventyr...",
+    "gameMaster": "Spelledare",
+    "inputPlaceholder": "Vad vill du göra?",
+    "send": "Skicka",
+    "continueStory": "Fortsätt berättelsen",
+    "continuing": "Fortsätter...",
+    "endAdventure": "Avsluta äventyr",
+    "diceRoll": "Tärningskast",
+    "rolled": "Slog: {roll}",
+    "skill": "+ {bonus} (färdighet)",
+    "success": "Lyckades!",
+    "notQuite": "Inte riktigt...",
+    "critical": "Kritiskt!",
+    "fumble": "Fummel!"
+  },
+  "DiceRoll": {
+    "rolling": "Kastar tärningen...",
+    "exploding": "⚡ EXPLODERAR! Kasta igen! ⚡",
+    "fumble": "😅 Hoppsan! Något fånigt händer!",
+    "success": "✨ LYCKAT! ✨",
+    "notQuite": "😅 Inte riktigt!",
+    "criticalBadge": "🌟 Kritiskt!",
+    "fumbleBadge": "😂 Fummel!",
+    "vsTarget": "mot Målvärde: {target}",
+    "continueButton": "Fortsätt äventyret →"
+  },
+  "RollRequest": {
+    "need": "Behöver",
+    "difficulty": {
+      "easy": "lätt",
+      "normal": "normal",
+      "hard": "svår",
+      "epic": "episk"
+    },
+    "rollButton": "Kasta tärningen!",
+    "rolling": "Kastar..."
+  },
+  "Planning": {
+    "creating": "Skapar ditt äventyr...",
+    "getReady": "Gör dig redo, {name}!",
+    "messages": {
+      "0": "Målar magiska länder...",
+      "1": "Väcker vänliga varelser...",
+      "2": "Gömmer skatter att hitta...",
+      "3": "Förbereder spännande utmaningar...",
+      "4": "Förbereder ditt äventyr!",
+      "5": "Lägger till glitter och magi...",
+      "6": "Gör allt mysigt och roligt..."
+    }
+  },
+  "PlanningError": {
+    "title": "Hoppsan! Något gick fel",
+    "description": "Vi kunde inte skapa ditt äventyr just nu.",
+    "retryButton": "Försök igen",
+    "cancelButton": "Tillbaka hem"
+  },
+  "LanguageSelector": {
+    "label": "Språk",
+    "en": "English",
+    "sv": "Svenska"
+  },
+  "Footer": {
+    "copyright": "© 2025 Timberbain. Alla rättigheter förbehållna."
+  }
+}

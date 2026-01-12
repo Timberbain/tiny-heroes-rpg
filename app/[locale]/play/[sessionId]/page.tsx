@@ -1,8 +1,9 @@
 'use client'
 
 import { use, useState, useEffect, useRef, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/src/i18n/navigation'
 import { getCharacter } from '@/lib/characters'
 import { saveSessionId, clearSessionId } from '@/lib/session-storage'
 import { simulateSkillRoll, getTargetNumber } from '@/lib/game-logic'
@@ -22,10 +23,16 @@ type GameUIState =
   | 'sending'
   | 'complete'
 
-export default function PlayAdventure({ params }: { params: Promise<{ sessionId: string }> }) {
+type Props = {
+  params: Promise<{ sessionId: string; locale: string }>
+}
+
+export default function PlayAdventure({ params }: Props) {
   const router = useRouter()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { sessionId } = use(params)
+  const t = useTranslations('Play')
+  const tc = useTranslations('Common')
 
   const [session, setSession] = useState<AdventureSession | null>(null)
   const [uiState, setUIState] = useState<GameUIState>('loading')
@@ -491,7 +498,7 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
       <div className="min-h-screen bg-parchment flex items-center justify-center">
         <div className="text-center">
           <div className="font-heading text-3xl text-text-primary mb-4 animate-bounce">
-            Loading your adventure...
+            {t('loading')}
           </div>
         </div>
       </div>
@@ -588,7 +595,7 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl">🎮</span>
                       <span className="font-heading text-sm font-bold text-text-secondary">
-                        Game Master
+                        {t('gameMaster')}
                       </span>
                     </div>
                   )}
@@ -599,21 +606,21 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
                    message.gameState.rollResult.diceRoll !== undefined &&
                    message.gameState.rollResult.total !== undefined && (
                     <div className="mt-4 bg-white/20 border-2 border-border-dark rounded-xl p-3">
-                      <div className="font-heading text-sm font-bold mb-2">🎲 Dice Roll</div>
+                      <div className="font-heading text-sm font-bold mb-2">🎲 {t('diceRoll')}</div>
                       <div className="font-body text-sm">
-                        Rolled: {message.gameState.rollResult.diceRoll}
+                        {t('rolled', { roll: message.gameState.rollResult.diceRoll })}
                         {message.gameState.rollResult.explodingRolls && message.gameState.rollResult.explodingRolls.length > 0 && (
                           <> + {message.gameState.rollResult.explodingRolls.join(' + ')}</>
                         )}
                         {message.gameState.rollResult.skillBonus !== undefined && message.gameState.rollResult.skillBonus > 0 && (
-                          <> + {message.gameState.rollResult.skillBonus} (skill)</>
+                          <> {t('skill', { bonus: message.gameState.rollResult.skillBonus })}</>
                         )}
                         {' = '}
                         {message.gameState.rollResult.total}
                         <br />
-                        {message.gameState.rollResult.success ? '✅ Success!' : '❌ Not quite...'}
-                        {message.gameState.rollResult.critical && ' 🌟 Critical!'}
-                        {message.gameState.rollResult.fumble && ' 😅 Fumble!'}
+                        {message.gameState.rollResult.success ? `✅ ${t('success')}` : `❌ ${t('notQuite')}`}
+                        {message.gameState.rollResult.critical && ` 🌟 ${t('critical')}`}
+                        {message.gameState.rollResult.fumble && ` 😅 ${t('fumble')}`}
                       </div>
                     </div>
                   )}
@@ -635,7 +642,7 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
                       type="text"
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
-                      placeholder="What do you want to do?"
+                      placeholder={t('inputPlaceholder')}
                       disabled={uiState === 'sending'}
                       className="flex-1 font-body text-base md:text-lg px-5 py-4 min-h-[56px] bg-white border-3 border-border-dark rounded-xl shadow-inner focus:outline-none focus:border-adventure-blue focus:ring-4 focus:ring-adventure-blue/20 transition-all duration-200 disabled:opacity-50 placeholder:text-text-light"
                     />
@@ -644,7 +651,7 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
                       disabled={!userInput.trim() || uiState === 'sending'}
                       className="font-heading text-lg md:text-xl font-bold px-6 md:px-8 py-4 min-h-[56px] bg-adventure-green text-white border-3 border-border-dark rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
-                      {uiState === 'sending' ? '...' : 'Send 🚀'}
+                      {uiState === 'sending' ? '...' : `${t('send')} 🚀`}
                     </button>
                   </div>
                 </form>
@@ -652,7 +659,7 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
                 {/* Divider */}
                 <div className="flex items-center gap-4 my-4">
                   <div className="flex-1 h-px bg-border-light"></div>
-                  <span className="font-body text-sm text-text-secondary">or</span>
+                  <span className="font-body text-sm text-text-secondary">{tc('or')}</span>
                   <div className="flex-1 h-px bg-border-light"></div>
                 </div>
 
@@ -662,7 +669,7 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
                   disabled={uiState === 'sending'}
                   className="w-full font-heading text-xl font-bold px-6 py-4 min-h-[64px] bg-adventure-blue text-white border-4 border-border-dark rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                  {uiState === 'sending' ? 'Continuing...' : 'Continue the story →'}
+                  {uiState === 'sending' ? t('continuing') : `${t('continueStory')} →`}
                 </button>
               </>
             )}
@@ -686,7 +693,7 @@ export default function PlayAdventure({ params }: { params: Promise<{ sessionId:
                 }}
                 className="font-body text-sm font-semibold px-4 py-2 bg-white text-text-secondary border-2 border-border-light rounded-lg shadow-sm hover:shadow hover:-translate-y-0.5 transition-all duration-200"
               >
-                End Adventure
+                {t('endAdventure')}
               </button>
             </div>
           </div>

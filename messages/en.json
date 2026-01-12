@@ -1,0 +1,183 @@
+{
+  "Common": {
+    "loading": "Loading...",
+    "error": "Oops! Something went wrong",
+    "retry": "Try Again",
+    "back": "Back",
+    "continue": "Continue",
+    "or": "or"
+  },
+  "Home": {
+    "title": "Tiny Heroes RPG",
+    "subtitle": "Embark on an amazing adventure! Choose your hero, roll the dice, and create your own magical story!",
+    "startButton": "Start Adventure!",
+    "designSystem": "View Design System",
+    "features": {
+      "title": "What Makes This Special?",
+      "dice": {
+        "title": "Roll Dice!",
+        "description": "Exciting dice rolls with exploding 6s make every action thrilling!"
+      },
+      "ai": {
+        "title": "AI Guide",
+        "description": "A smart game master creates unique adventures just for you!"
+      },
+      "fun": {
+        "title": "Always Fun",
+        "description": "Failures are funny, successes are celebrated - never scary!"
+      }
+    }
+  },
+  "SelectCharacter": {
+    "title": "Choose Your Hero!",
+    "subtitle": "Pick a brave hero to go on amazing adventures! Each hero is special and great at different things.",
+    "specialSkills": "Special Skills:",
+    "chooseButton": "Choose {characterName}!",
+    "selected": "Selected!",
+    "backToHome": "Back to Home"
+  },
+  "Characters": {
+    "sorceress": {
+      "displayName": "Sorceress",
+      "archetype": "Magical Scholar",
+      "description": "A person who can cast spells and do magical things"
+    },
+    "knight": {
+      "displayName": "Knight",
+      "archetype": "Brave Protector",
+      "description": "A brave warrior who protects friends and fights for good"
+    },
+    "ranger": {
+      "displayName": "Ranger",
+      "archetype": "Swift Hunter",
+      "description": "A skilled hunter who moves quietly and knows the forest"
+    },
+    "bard": {
+      "displayName": "Bard",
+      "archetype": "Friendly Storyteller",
+      "description": "A cheerful performer who makes friends and inspires others"
+    }
+  },
+  "Skills": {
+    "strong": {
+      "name": "Strong Stuff",
+      "description": "Climbing, jumping, lifting, fighting, breaking things"
+    },
+    "smart": {
+      "name": "Smart Stuff",
+      "description": "Solving puzzles, remembering facts, noticing clues"
+    },
+    "sneaky": {
+      "name": "Sneaky Stuff",
+      "description": "Hiding, sneaking, running fast, dodging"
+    },
+    "kind": {
+      "name": "Kind Stuff",
+      "description": "Talking, making friends, helping others, calming animals"
+    },
+    "ratings": {
+      "0": "Not good yet",
+      "1": "Beginner",
+      "2": "Trained",
+      "3": "Expert"
+    }
+  },
+  "SetupAdventure": {
+    "title": "Setup Your Adventure!",
+    "subtitle": "Tell us about your hero and the kind of adventure you want to go on!",
+    "yourHero": "Your Hero",
+    "heroName": {
+      "label": "What's your hero's name?",
+      "placeholder": "Enter a brave name..."
+    },
+    "setting": {
+      "label": "What kind of adventure?",
+      "fantasy": "Fantasy (castles, dragons, magic!)",
+      "scifi": "Space Adventure (rockets, aliens, planets!)",
+      "horror": "Silly Spooky (friendly monsters, not scary!)",
+      "custom": "Surprise Me!"
+    },
+    "length": {
+      "label": "How long should the adventure be?",
+      "short": "Short (5-10 minutes)",
+      "long": "Long (15-20 minutes)"
+    },
+    "inspiration": {
+      "label": "Any ideas for the story? (Optional)",
+      "placeholder": "Tell us what you'd like to happen... (a lost kitten, a hidden treasure, etc.)",
+      "charCount": "{count}/200 characters"
+    },
+    "startButton": "Start Adventure!",
+    "starting": "Starting Adventure...",
+    "changeHero": "Change Hero",
+    "validation": {
+      "nameRequired": "Please give your hero a name!"
+    },
+    "error": "Oops! Something went wrong. Please try again."
+  },
+  "Play": {
+    "loading": "Loading your adventure...",
+    "gameMaster": "Game Master",
+    "inputPlaceholder": "What do you want to do?",
+    "send": "Send",
+    "continueStory": "Continue the story",
+    "continuing": "Continuing...",
+    "endAdventure": "End Adventure",
+    "diceRoll": "Dice Roll",
+    "rolled": "Rolled: {roll}",
+    "skill": "+ {bonus} (skill)",
+    "success": "Success!",
+    "notQuite": "Not quite...",
+    "critical": "Critical!",
+    "fumble": "Fumble!"
+  },
+  "DiceRoll": {
+    "rolling": "Rolling the dice...",
+    "exploding": "⚡ EXPLODING! Roll again! ⚡",
+    "fumble": "😅 Oops! Something silly happens!",
+    "success": "✨ SUCCESS! ✨",
+    "notQuite": "😅 Not Quite!",
+    "criticalBadge": "🌟 Critical!",
+    "fumbleBadge": "😂 Fumble!",
+    "vsTarget": "vs Target Number: {target}",
+    "continueButton": "Continue Adventure →"
+  },
+  "RollRequest": {
+    "need": "Need",
+    "difficulty": {
+      "easy": "easy",
+      "normal": "normal",
+      "hard": "hard",
+      "epic": "epic"
+    },
+    "rollButton": "Roll the Dice!",
+    "rolling": "Rolling..."
+  },
+  "Planning": {
+    "creating": "Creating Your Adventure...",
+    "getReady": "Get ready, {name}!",
+    "messages": {
+      "0": "Painting magical lands...",
+      "1": "Waking up friendly creatures...",
+      "2": "Hiding treasures to find...",
+      "3": "Setting up exciting challenges...",
+      "4": "Preparing your adventure!",
+      "5": "Adding sparkles and wonder...",
+      "6": "Making everything cozy and fun..."
+    }
+  },
+  "PlanningError": {
+    "title": "Oops! Something went wrong",
+    "description": "We couldn't create your adventure right now.",
+    "retryButton": "Try Again",
+    "cancelButton": "Go Back Home"
+  },
+  "LanguageSelector": {
+    "label": "Language",
+    "en": "English",
+    "sv": "Svenska"
+  },
+  "Footer": {
+    "copyright": "© 2025 Timberbain. All rights reserved."
+  }
+}

@@ -1,3 +1,6 @@
+// Locale Types
+export type Locale = 'en' | 'sv'
+
 // Character Types
 export type CharacterId = 'sorceress' | 'knight' | 'ranger' | 'bard'
 
@@ -59,6 +62,7 @@ export interface AdventureSession {
   adventureSetting: AdventureSetting
   adventureLength: AdventureLength
   adventureInspiration: string // Player's input for story direction
+  locale: Locale // Language for UI and AI responses
   messages: Message[] // Full conversation history
   interactionCount: number // Track progress (MVP ends at 5)
   isComplete: boolean
@@ -126,6 +130,7 @@ export interface CreateSessionRequest {
   adventureSetting: AdventureSetting
   adventureLength: AdventureLength
   adventureInspiration: string
+  locale: Locale
 }
 
 export interface CreateSessionResponse {

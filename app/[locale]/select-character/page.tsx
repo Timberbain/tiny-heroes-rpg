@@ -1,29 +1,35 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { getAllCharacters } from '@/lib/characters';
-import { CharacterId } from '@/lib/types';
-import {
-  SKILL_ICONS,
-  SKILL_NAMES,
-  SKILL_RATING_LABELS,
-} from '@/lib/characters';
+import { useState } from 'react'
+import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/src/i18n/navigation'
+import { getAllCharacters } from '@/lib/characters'
+import { CharacterId } from '@/lib/types'
 
 export default function SelectCharacter() {
-  const router = useRouter();
+  const router = useRouter()
+  const t = useTranslations('SelectCharacter')
+  const tc = useTranslations('Characters')
+  const ts = useTranslations('Skills')
   const [selectedCharacter, setSelectedCharacter] =
-    useState<CharacterId | null>(null);
-  const characters = getAllCharacters();
+    useState<CharacterId | null>(null)
+  const characters = getAllCharacters()
+
+  const SKILL_ICONS: Record<string, string> = {
+    strong: '💪',
+    smart: '📚',
+    sneaky: '⚡',
+    kind: '❤️',
+  }
 
   const handleSelectCharacter = (characterId: CharacterId) => {
-    setSelectedCharacter(characterId);
+    setSelectedCharacter(characterId)
     // Small delay for visual feedback before navigation
     setTimeout(() => {
-      router.push(`/setup-adventure?character=${characterId}`);
-    }, 300);
-  };
+      router.push(`/setup-adventure?character=${characterId}`)
+    }, 300)
+  }
 
   return (
     <main className="min-h-screen bg-linear-to-br from-parchment to-parchment-dark p-4 md:p-8">
@@ -31,18 +37,17 @@ export default function SelectCharacter() {
         {/* Header */}
         <div className="mb-8 rounded-3xl border-4 border-border-dark bg-cloud p-6 text-center shadow-xl md:mb-12 md:p-8">
           <h1 className="mb-4 font-heading text-3xl font-bold text-text-primary sm:text-4xl md:text-5xl lg:text-6xl">
-            Choose Your Hero! 🌟
+            {t('title')} 🌟
           </h1>
           <p className="mx-auto max-w-2xl font-body text-lg text-text-secondary md:text-xl">
-            Pick a brave hero to go on amazing adventures! Each hero is special
-            and great at different things.
+            {t('subtitle')}
           </p>
         </div>
 
         {/* Character Grid */}
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
           {characters.map((character) => {
-            const isSelected = selectedCharacter === character.id;
+            const isSelected = selectedCharacter === character.id
 
             return (
               <div
@@ -67,7 +72,7 @@ export default function SelectCharacter() {
                     >
                       <Image
                         src={character.iconUrl}
-                        alt={character.displayName}
+                        alt={tc(`${character.id}.displayName`)}
                         width={128}
                         height={128}
                         className="h-full w-full object-contain p-2"
@@ -81,13 +86,13 @@ export default function SelectCharacter() {
                       className="mb-2 font-heading text-2xl font-bold md:text-3xl"
                       style={{ color: character.color }}
                     >
-                      {character.displayName}
+                      {tc(`${character.id}.displayName`)}
                     </h2>
                     <p className="mb-3 font-body text-base text-text-secondary md:text-lg">
-                      {character.archetype}
+                      {tc(`${character.id}.archetype`)}
                     </p>
                     <p className="font-body text-sm text-text-primary md:text-base">
-                      {character.description}
+                      {tc(`${character.id}.description`)}
                     </p>
                   </div>
                 </div>
@@ -95,7 +100,7 @@ export default function SelectCharacter() {
                 {/* Skills Display */}
                 <div className="mb-6 space-y-3">
                   <h3 className="mb-3 font-heading text-lg font-bold text-text-primary md:text-xl">
-                    Special Skills:
+                    {t('specialSkills')}
                   </h3>
 
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -104,10 +109,10 @@ export default function SelectCharacter() {
                         keyof typeof character.skills
                       >
                     ).map((skillKey) => {
-                      const skillValue = character.skills[skillKey];
-                      const skillName = SKILL_NAMES[skillKey];
-                      const skillIcon = SKILL_ICONS[skillKey];
-                      const skillLabel = SKILL_RATING_LABELS[skillValue];
+                      const skillValue = character.skills[skillKey]
+                      const skillName = ts(`${skillKey}.name`)
+                      const skillIcon = SKILL_ICONS[skillKey]
+                      const skillLabel = ts(`ratings.${skillValue}`)
 
                       return (
                         <div
@@ -131,7 +136,7 @@ export default function SelectCharacter() {
                             {skillValue}
                           </div>
                         </div>
-                      );
+                      )
                     })}
                   </div>
                 </div>
@@ -141,16 +146,16 @@ export default function SelectCharacter() {
                   className={`min-h-[64px] w-full rounded-2xl border-4 border-border-dark px-8 py-4 font-heading text-xl font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg active:translate-y-1 active:shadow-pressed md:text-2xl ${isSelected ? 'animate-celebrate' : ''} `}
                   style={{ backgroundColor: character.color }}
                   onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelectCharacter(character.id);
+                    e.stopPropagation()
+                    handleSelectCharacter(character.id)
                   }}
                 >
                   {isSelected
-                    ? '✨ Selected!'
-                    : `Choose ${character.displayName}!`}
+                    ? `✨ ${t('selected')}`
+                    : t('chooseButton', { characterName: tc(`${character.id}.displayName`) })}
                 </button>
               </div>
-            );
+            )
           })}
         </div>
 
@@ -160,10 +165,10 @@ export default function SelectCharacter() {
             onClick={() => router.push('/')}
             className="rounded-xl border-3 border-border-medium bg-cloud px-8 py-4 font-body text-lg font-semibold text-text-primary shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
           >
-            ← Back to Home
+            ← {t('backToHome')}
           </button>
         </div>
       </div>
     </main>
-  );
+  )
 }
